@@ -1,0 +1,51 @@
+# Feature: Landingpage (`feature/landing-page`)
+
+**User Story:** US-04 · **Sprint:** 2 · **Story Points:** 2 · **Basis:** `feature/chips-wallet`
+
+## 1. Planung
+
+### Ziel
+Der erste Eindruck: ein goldenes Wappen, der Titel „Casino Goldenes Ass“, schwebende Jetons,
+drei Feature-Karten und die Schaltfläche „Casino betreten“, die zum Jetons-Kauf führt.
+
+### Umzusetzende Funktionen
+
+| Funktion / Datei | Inhalt | Aufbau |
+|---|---|---|
+| `components/screens/landing/landingContent.ts` → `LANDING_FEATURES` | Texte der drei Karten (♠ Texas Hold’em, ◉ Europäischer Kessel, ❖ Ein Guthaben) | Konstante |
+| `…/landingContent.ts` → `FLOAT_CHIPS` | Position, Grösse, Rotation, Animation der 4 schwebenden Jetons (20, 50, 500, 10) | Konstante aus dem Prototyp |
+| `components/screens/landing/LandingScreen.tsx` | Bildschirm | Glow-Hintergrund, Linienraster, Wappen mit rotierenden Ringen (`crestSpin`), Titel mit Gold-Verlauf, CTA, Karten, Fusszeile |
+| `LandingScreen.module.css` | Styles 1:1 aus dem Prototyp | inkl. Animationen `rise`, `shimmer`, `floatChip` |
+| `CasinoApp` | Bildschirm `landing` verwendet `LandingScreen` | |
+
+### Akzeptanzkriterien
+- Titel „Casino Goldenes Ass“ und Untertitel „Poker & Roulette“ sind sichtbar.
+- Drei Feature-Karten und vier schwebende Jetons werden angezeigt.
+- Klick auf „Casino betreten“ wechselt zum Bildschirm `buy`.
+
+## 2. Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `components/screens/landing/LandingScreen.test.tsx` | Titel/Untertitel, 3 Feature-Karten, 4 schwebende Jetons (20/50/500/10), CTA „Casino betreten“ → Kaufbildschirm inkl. Header |
+
+Die Tests rendern die ganze `CasinoApp` (Integrationstest), damit auch der Bildschirmwechsel geprüft wird.
+
+**Ergebnis Red-Phase:** Testdatei rot (`landingContent` fehlt). ✔
+
+## 3. Umsetzung (Green)
+
+- Inhalte (Karten, schwebende Jetons) als Daten in `landingContent.ts`, Darstellung in `LandingScreen.tsx`.
+- Schwebende Jetons nutzen die gemeinsame `Chip`-Komponente; Rotation über die CSS-Variable `--r`,
+  die in der Keyframe-Animation `floatChip` verwendet wird (wie im Prototyp).
+- Wappen: zwei gegenläufig rotierende Ringe (`crestSpin` 26 s / 34 s rückwärts) um ein goldenes Medaillon.
+- Gestaffeltes Einblenden via `rise` mit Verzögerungen 0 / .1 / .2 / .3 s.
+
+**Ergebnis Green-Phase:** 43/43 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| TypeScript kennt die CSS-Variable `--r` im `style`-Objekt nicht. | Style-Objekt als `CSSProperties` casten. |
+| Der Hauptbereich soll ohne Header die volle Höhe füllen. | `.main` mit `min-height: 100vh` und `flex: 1`. |
