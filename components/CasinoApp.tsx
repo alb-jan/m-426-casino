@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 import { BuyScreen } from "@/components/screens/buy/BuyScreen";
+import { ExitScreen } from "@/components/screens/exit/ExitScreen";
 import { LandingScreen } from "@/components/screens/landing/LandingScreen";
 import { LobbyScreen } from "@/components/screens/lobby/LobbyScreen";
 import type { Screen, WalletState } from "@/lib/wallet";
@@ -32,7 +33,7 @@ function renderScreen(screen: Screen): ReactNode {
     case "roulette":
       return <Placeholder title="Roulette" />;
     case "exit":
-      return <Placeholder title="Auszahlung" />;
+      return <ExitScreen />;
   }
 }
 
