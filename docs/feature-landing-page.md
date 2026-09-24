@@ -32,3 +32,20 @@ drei Feature-Karten und die Schaltfläche „Casino betreten“, die zum Jetons-
 Die Tests rendern die ganze `CasinoApp` (Integrationstest), damit auch der Bildschirmwechsel geprüft wird.
 
 **Ergebnis Red-Phase:** Testdatei rot (`landingContent` fehlt). ✔
+
+## 3. Umsetzung (Green)
+
+- Inhalte (Karten, schwebende Jetons) als Daten in `landingContent.ts`, Darstellung in `LandingScreen.tsx`.
+- Schwebende Jetons nutzen die gemeinsame `Chip`-Komponente; Rotation über die CSS-Variable `--r`,
+  die in der Keyframe-Animation `floatChip` verwendet wird (wie im Prototyp).
+- Wappen: zwei gegenläufig rotierende Ringe (`crestSpin` 26 s / 34 s rückwärts) um ein goldenes Medaillon.
+- Gestaffeltes Einblenden via `rise` mit Verzögerungen 0 / .1 / .2 / .3 s.
+
+**Ergebnis Green-Phase:** 43/43 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| TypeScript kennt die CSS-Variable `--r` im `style`-Objekt nicht. | Style-Objekt als `CSSProperties` casten. |
+| Der Hauptbereich soll ohne Header die volle Höhe füllen. | `.main` mit `min-height: 100vh` und `flex: 1`. |
