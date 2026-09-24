@@ -40,3 +40,17 @@ Vermessung der Geometrie (Skript über die GLB-Vertexdaten):
 - Die Kugelbewegung ist stetig (keine Sprünge) und endet auf Fachhöhe.
 - Ohne WebGL (z. B. alte Geräte, Tests) erscheint ein Ersatz-Kessel und das Spiel funktioniert weiter.
 - Die Szene wird beim Verlassen des Tisches vollständig freigegeben (`dispose`).
+
+## 2. Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `lib/roulette/wheelMath.test.ts` | Fachwinkel, `numberAt` (auch mit gedrehtem Rotor), Start auf der Bahn, **Landung im richtigen Fach für alle 37 Zahlen** (`it.each`), gegenläufige Umdrehungen, Stetigkeit über 600 Samples, Radius nimmt monoton ab, Endwinkel |
+| `components/roulette3d/RouletteWheel3D.test.tsx` | Szene wird mit Container + Modell-URL erzeugt, `spinTo(17, 5000)` + `onSpinEnd`, `dispose` beim Unmount, Fallback ohne WebGL (inkl. Timer), Fallback bei Ladefehler |
+| `components/screens/roulette/RouletteScreen3D.test.tsx` | Bühne im Roulettetisch sichtbar; Auswertung erst am Ende der Kessel-Animation (nicht vorher) |
+
+three.js selbst wird in den Komponententests **gemockt** (`vi.mock("./wheelScene")`, `vi.mock("./webgl")`), da jsdom kein WebGL hat.
+Die gesamte Bewegungslogik liegt deshalb in der reinen, voll testbaren Datei `wheelMath.ts`.
+Test-Infrastruktur: `HTMLCanvasElement.prototype.getContext` liefert in `vitest.setup.ts` still `null`.
+
+**Ergebnis Red-Phase:** 3 Testdateien rot. ✔
