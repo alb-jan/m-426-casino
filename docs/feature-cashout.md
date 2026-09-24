@@ -21,3 +21,12 @@ seine Bilanz. Danach kann er eine neue Sitzung starten oder doch weiterspielen.
 - Eingezahlt CHF 50.00, ausbezahlt CHF 62.00 → Bilanz `+CHF 12.00` (grün); ausgeglichen `+CHF 0.00`.
 - „Neue Sitzung starten“ setzt alles zurück und zeigt den Kaufbildschirm mit Guthaben 0.
 - „Doch weiterspielen“ führt zurück in die Lobby.
+
+## 2. Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `lib/cashout.test.ts` | Verlust (rot, `−CHF`), Gewinn (grün, `+CHF`), ausgeglichen, Tausendertrennzeichen |
+| `components/screens/exit/ExitScreen.test.tsx` | Titel + Kennzahlen, neue Sitzung (Kaufbildschirm, Guthaben 0), weiterspielen (Lobby, Guthaben bleibt) |
+
+**Ergebnis Red-Phase:** 2 Testdateien rot. ✔
