@@ -93,3 +93,10 @@ funktionieren; der Mahagoni-Kessel und die Kugelbahn erscheinen aber fast **weis
 prozedurale Node-Setups nicht exportieren → im GLB fehlt `baseColorFactor` → three.js nimmt Weiss.
 
 **Test zuerst (Red):** `components/roulette3d/materials.test.ts` – `applyMaterialOverrides` färbt nur diese zwei Materialien ein.
+
+**Lösung (Green):** `components/roulette3d/materials.ts` mit `MATERIAL_OVERRIDES` (Mahagoni `#4A2412`, Bahn `#6E3F1C`);
+`wheelScene` ruft `applyMaterialOverrides` beim Laden für jedes Mesh-Material auf. Alle anderen Materialien (Messing,
+Fächer, Zahlen, Kugel) kommen korrekt aus Blender und bleiben unverändert. → 110/110 Tests grün.
+
+**Alternative (verworfen):** Holz-Textur in Blender backen und als Bild ins GLB exportieren – mehr Dateigrösse und ohne
+Blender-Zugriff im Build nicht reproduzierbar. Die Farbkorrektur ist dokumentiert und leicht rückgängig zu machen.

@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { applyMaterialOverrides } from "./materials";
 import { planSpin, pocketAngle, sampleSpin, BALL_POCKET, type SpinPlan } from "@/lib/roulette/wheelMath";
 
 /**
@@ -63,7 +64,12 @@ export async function createWheelScene(container: HTMLElement, modelUrl: string)
   const gltf = await new GLTFLoader().loadAsync(modelUrl);
   const model = gltf.scene;
   model.traverse((n) => {
-    if ((n as THREE.Mesh).isMesh) n.castShadow = n.receiveShadow = true;
+    const mesh = n as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    mesh.castShadow = mesh.receiveShadow = true;
+    (Array.isArray(mesh.material) ? mesh.material : [mesh.material]).forEach((m) =>
+      applyMaterialOverrides(m as THREE.MeshStandardMaterial),
+    );
   });
   scene.add(model);
   const rotor = model.getObjectByName("Rotor") ?? model;
