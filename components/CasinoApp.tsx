@@ -5,6 +5,7 @@ import { CasinoProvider, useCasino } from "@/components/casino/CasinoProvider";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
+import { ExitScreen } from "@/components/screens/exit/ExitScreen";
 import type { Screen, WalletState } from "@/lib/wallet";
 
 /** Platzhalter für Bildschirme, die in eigenen Feature-Branches umgesetzt werden. */
@@ -29,7 +30,7 @@ function renderScreen(screen: Screen): ReactNode {
     case "roulette":
       return <Placeholder title="Roulette" />;
     case "exit":
-      return <Placeholder title="Auszahlung" />;
+      return <ExitScreen />;
   }
 }
 

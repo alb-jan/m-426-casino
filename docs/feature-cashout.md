@@ -30,3 +30,19 @@ seine Bilanz. Danach kann er eine neue Sitzung starten oder doch weiterspielen.
 | `components/screens/exit/ExitScreen.test.tsx` | Titel + Kennzahlen, neue Sitzung (Kaufbildschirm, Guthaben 0), weiterspielen (Lobby, Guthaben bleibt) |
 
 **Ergebnis Red-Phase:** 2 Testdateien rot. ✔
+
+## 3. Umsetzung (Green)
+
+- `exitStats` berechnet die Bilanz auf Rappen gerundet und liefert fertige Anzeige-Strings mit Farbe (Farben aus `COLORS`).
+- `ExitScreen` liest `bought`/`cashed` aus dem Wallet; „Neue Sitzung starten“ ruft `reset()` (→ Kaufbildschirm, alles 0),
+  „Doch weiterspielen“ navigiert in die Lobby – das Jeton-Guthaben bleibt erhalten, da die Auszahlung erst beim
+  Verlassen des Casinos „real“ wird (wie im Prototyp).
+
+**Ergebnis Green-Phase:** 46/46 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| Gleitkomma-Differenz `45.5 − 50` kann Werte wie `−4.500000001` erzeugen. | Bilanz vor der Anzeige auf Rappen runden. |
+| `git stash -u` konnte auf OneDrive ein leeres, gesperrtes Verzeichnis eines anderen Branches nicht entfernen; dadurch landete die Test-Doku im Planungs-Commit. | Commit mit `git reset --soft` zurückgenommen und Planung/Tests in zwei saubere Commits aufgeteilt. Künftig kein `stash -u` mehr, sondern gezieltes `git add`. |
