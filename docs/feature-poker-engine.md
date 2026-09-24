@@ -41,3 +41,19 @@ Der Pokertisch (UI) folgt im Branch `feature/poker-table`.
 - Blinds, Reihenfolge, Strassenwechsel und Showdown folgen den Regeln oben.
 - Side-Pots werden korrekt verteilt; Split-Pots teilen gerecht, Restjeton an den ersten Gewinner links vom Dealer.
 - Die Jetonsumme am Tisch bleibt in jeder Situation erhalten (Invariante).
+
+## 2. Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `lib/poker/cards.test.ts` | `parseCard`/`cards`, ungültige Karte, `cardText` (A, K, Q, J, 10, 7), 52 eindeutige Karten, deterministisches Mischen mit Seed |
+| `lib/poker/evaluate.test.ts` | alle 10 Kategorien (parametrisiert mit `it.each`), Wheel A-5, A-5-Straight-Flush ≠ Royal, Kategorie-Vergleich, Kicker, Gleichstand, beste 5 aus 7, Pre-Flop-Bewertung |
+| `lib/poker/engine.test.ts` | Blinds + Reihenfolge, Dealer-Rotation, Blind-All-In, Unveränderlichkeit, Flop/Turn/River, Passen, Mindesterhöhung, Neueröffnung nach Raise, „call for less“, Aktionsleisten-Hilfen, Sieg ohne Showdown, Showdown-Gewinn/Verlust, Split-Pot mit Restjeton, Haupt-/Nebenpot, automatischer Runout, `buildPots`, `nextHandStacks` |
+| `lib/poker/bot.test.ts` | `handStrength` pre-/post-flop, Bot erhöht mit AA, passt mit 7-2 gegen grosse Erhöhung, schiebt ohne Einsatz |
+
+**Test-Hilfe `rig()`:** baut ein Deck so, dass `pop()` zuerst die gewünschten Startkarten und danach das Board liefert –
+so lassen sich Showdown-Situationen exakt nachstellen. Der Zufall der Bots wird mit `() => 0.5` neutralisiert.
+
+**Invariante:** Mehrere Tests prüfen, dass die Summe aller Jetons am Tisch unverändert bleibt.
+
+**Ergebnis Red-Phase:** 4 Testdateien rot (Module fehlen). ✔
