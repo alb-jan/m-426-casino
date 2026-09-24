@@ -44,3 +44,21 @@ Test-Infrastruktur im selben Commit: `vitest.config.mts`, `vitest.setup.ts`, npm
 
 **Ergebnis Red-Phase:** `npm test` → 3 von 3 Testdateien schlagen fehl
 (`Failed to resolve import "./format"` usw.), da die Module noch nicht existieren. ✔ erwartet.
+
+## 3. Umsetzung (Green)
+
+- `lib/format.ts`: eigene Gruppierung der Tausender mit `’` per Regex, `toFixed(2)` für Franken.
+- `lib/theme.ts`: alle im Prototyp verwendeten Farben als `COLORS`, dazu `GOLD_GRADIENT` für die Gold-Buttons.
+- `app/fonts.ts`: drei Google-Schriften über `next/font/google` (selbst gehostet, kein Layout-Shift); `fontVariables` wird am `<html>` gesetzt.
+- `app/globals.css`: Grundstile und alle Keyframes aus dem `<helmet>` des Prototyps; Utility-Klassen `.serif` und `.mono`.
+- `app/layout.tsx`: Titel „Casino Goldenes Ass“, `lang="de"`.
+
+**Ergebnis Green-Phase:** `npm test` → 7/7 Tests grün, `tsc --noEmit` und `eslint` ohne Fehler.
+
+## 4. Probleme & Lösungen
+
+| Problem | Ursache | Lösung |
+|---|---|---|
+| `formatNumber(1000)` lieferte `1'000` statt `1’000` (3 Tests rot) | Die ICU-Daten von Node formatieren `de-CH` mit ASCII-Apostroph, Chrome mit typografischem `’`. Server- und Client-Rendering würden sich unterscheiden (Hydration-Mismatch). | Tausendertrennzeichen selbst setzen (Regex `\B(?=(\d{3})+(?!\d))`), unabhängig von der Laufzeitumgebung. |
+| `next/font/google` lässt sich in Vitest nicht ausführen | Die Funktion wird zur Build-Zeit vom Next-Compiler ersetzt. | Globaler Mock in `vitest.setup.ts`, der `className`/`variable` zurückgibt. |
+| CRLF-Warnungen beim Commit | Windows mit `core.autocrlf=true` | unkritisch, Git normalisiert die Zeilenenden. |

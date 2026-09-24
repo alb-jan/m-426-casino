@@ -1,8 +1,7 @@
 export default function Home() {
   return (
-    <main>
-      <h1>Next.js</h1>
-      <p>Bearbeite app/page.tsx, um loszulegen.</p>
+    <main style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>
+      <h1 className="serif" style={{ fontSize: 48, color: "#E8B94A" }}>Casino Goldenes Ass</h1>
     </main>
   );
 }
