@@ -91,7 +91,8 @@ describe("PokerScreen", () => {
     renderTable();
     myTurn();
     act(() => screen.getByRole("button", { name: "Passen" }).click());
-    run(15000);
+    // nur so lange vorspulen, bis das Ergebnis da ist – sonst ist der Toast (4.6 s) schon wieder weg
+    for (let i = 0; i < 30 && !screen.queryByText("Rundenergebnis"); i++) run(500);
     expect(screen.getByText("Rundenergebnis")).toBeInTheDocument();
     expect(screen.getByTestId("result-title")).toHaveTextContent("Runde beendet");
     expect(screen.getAllByText(/gewinnt den Pot/).length).toBeGreaterThan(0);

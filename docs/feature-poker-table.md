@@ -48,3 +48,27 @@ damit React zwischen den Bot-Zügen die Effekte ausführen und neue Timer planen
 Deck (`rigDeck`) und Zufall (`rng = () => 0.5`) werden per Props injiziert → die Bots verhalten sich deterministisch.
 
 **Ergebnis Red-Phase:** 2 Testdateien rot. ✔
+
+## 3. Umsetzung (Green)
+
+- **Trennung Logik / Ablauf / Darstellung:** `lib/poker/*` (reine Logik) → `usePokerGame` (Zeit, Wallet, Toasts, Animation)
+  → kleine Darstellungs-Komponenten (`Seat`, `PlayingCard`, `ChipFlight`, `ResultOverlay`, `ActionBar`).
+- **Bot-Züge:** ein `useEffect` auf den Spielzustand plant genau einen Timer (950 ms) für den Bot am Zug bzw. 900 ms im Runout;
+  der Cleanup löscht ihn wieder (auch im React-StrictMode sicher).
+- **`commit(prev, next)`:** zentrale Stelle für Nebenwirkungen – Differenz der `committed`-Beträge löst den Jeton-Flug aus,
+  der Wechsel nach `done` den Toast (Observer über `useNotify`) und das Einziehen des Pots zum Gewinner.
+- **Wallet-Sync:** `useEffect` setzt `wallet.chips = eigener Stack`; dadurch zeigen Header und „Dein Guthaben“ immer den Stack.
+- **Karten:** `PlayingCard` mit `perspective` + `rotateY` und `backface-visibility` (Flip-Animation 0.62 s); Rückseite mit Ass-Emblem als SVG.
+- Styles 1:1 aus dem Prototyp (ovaler Tisch `border-radius: 200px / 90px`, Holzrand, Filz-Verlauf), plus Mobile-Anpassungen.
+
+**Ergebnis Green-Phase:** 110/110 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| Test „Passen → Toast“ schlug fehl: nach 15 s vorgespulter Zeit war der Toast (Lebensdauer 4.6 s) schon wieder verschwunden. | Test spult nur noch vor, bis das Ergebnis-Overlay erscheint (Fehler lag im Test, nicht im Code). |
+| `act(() => advanceTimersByTime(10000))` führte nur den ersten Bot-Zug aus. | React plant den nächsten Timer erst im Effekt nach dem Rendern → in 500-ms-Schritten vorspulen (Helfer `run`). |
+| ESLint `react-hooks/exhaustive-deps`: Hilfsfunktion `later` wurde in mehreren `useCallback` verwendet. | `later` selbst als stabiles `useCallback` definiert und in die Abhängigkeitslisten aufgenommen. |
+| Blinds der ersten Hand wurden im StrictMode doppelt animiert. | `started`-Ref als Schutz im Mount-Effekt. |
+| Im Runout gibt es keinen Spieler „am Zug“. | ActionBar zeigt dann „Karten werden aufgedeckt“. |
