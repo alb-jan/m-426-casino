@@ -83,3 +83,20 @@ Test-Infrastruktur: `HTMLCanvasElement.prototype.getContext` liefert in `vitest.
 | Bei der Kombination Timer + 3D-Ende könnte die Runde doppelt ausgewertet werden. | `finishSpin` prüft/leert den eingefrorenen Spin im Ref → idempotent. |
 | `next dev` (Next 16) erzeugt automatisch `AGENTS.md` und `CLAUDE.md` im Projekt. | Nicht Teil des Features → nicht committet (lässt sich mit `agentRules: false` in `next.config.ts` abschalten). |
 | Visuelle Kontrolle im Feature-Branch nicht möglich, da Landing/Kauf/Lobby in parallelen Branches liegen. | Visuelle Abnahme erfolgt nach der Integration im `dev`-Branch (siehe `dev-integration.md`). |
+
+## 5. Bugfix aus der Integration (Iteration 2)
+
+**Befund (visuelle Abnahme im `dev`-Branch, Headless-Chrome-Screenshots):** Kessel, Zahlenkranz, Kugel und Kamerafahrt
+funktionieren; der Mahagoni-Kessel und die Kugelbahn erscheinen aber fast **weiss**.
+
+**Ursache:** Die Materialien `Mahogany` und `BallTrack` verwenden in Blender prozedurale Holz-Texturen. Der glTF-Exporter kann
+prozedurale Node-Setups nicht exportieren → im GLB fehlt `baseColorFactor` → three.js nimmt Weiss.
+
+**Test zuerst (Red):** `components/roulette3d/materials.test.ts` – `applyMaterialOverrides` färbt nur diese zwei Materialien ein.
+
+**Lösung (Green):** `components/roulette3d/materials.ts` mit `MATERIAL_OVERRIDES` (Mahagoni `#4A2412`, Bahn `#6E3F1C`);
+`wheelScene` ruft `applyMaterialOverrides` beim Laden für jedes Mesh-Material auf. Alle anderen Materialien (Messing,
+Fächer, Zahlen, Kugel) kommen korrekt aus Blender und bleiben unverändert. → 110/110 Tests grün.
+
+**Alternative (verworfen):** Holz-Textur in Blender backen und als Bild ins GLB exportieren – mehr Dateigrösse und ohne
+Blender-Zugriff im Build nicht reproduzierbar. Die Farbkorrektur ist dokumentiert und leicht rückgängig zu machen.
