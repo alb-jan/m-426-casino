@@ -1,6 +1,7 @@
 "use client";
 
 import { useCasino } from "@/components/casino/CasinoProvider";
+import { RouletteWheel3D } from "@/components/roulette3d/RouletteWheel3D";
 import { formatNumber } from "@/lib/format";
 import { numberBg } from "@/lib/roulette/rules";
 import { BettingBoard } from "./BettingBoard";
@@ -9,7 +10,8 @@ import styles from "./RouletteScreen.module.css";
 import { useRoulette, type RouletteOptions } from "./useRoulette";
 
 export function RouletteScreen(options: RouletteOptions) {
-  const r = useRoulette(options);
+  // Standard: Auswertung erst, wenn die Kugel im 3D-Kessel liegt (spinDuration: null)
+  const r = useRoulette({ spinDuration: null, ...options });
   const { state: wallet } = useCasino();
 
   return (
@@ -35,6 +37,7 @@ export function RouletteScreen(options: RouletteOptions) {
 
         <div className={styles.columns}>
           <section className={styles.side}>
+            <RouletteWheel3D target={r.pending} onSpinEnd={r.finishSpin} />
             <ResultPanel spinning={r.spinning} result={r.result} />
 
             {r.history.length > 0 && (

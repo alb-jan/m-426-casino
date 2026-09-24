@@ -54,3 +54,32 @@ Die gesamte Bewegungslogik liegt deshalb in der reinen, voll testbaren Datei `wh
 Test-Infrastruktur: `HTMLCanvasElement.prototype.getContext` liefert in `vitest.setup.ts` still `null`.
 
 **Ergebnis Red-Phase:** 3 Testdateien rot. ✔
+
+## 3. Umsetzung (Green)
+
+- **`wheelMath.ts`**: Der Plan legt den Endwinkel so fest, dass beim Einrasten (t = 0.84) die Kugel exakt über dem Zielfach
+  des (weiterdrehenden) Rotors steht; der Startwinkel der Kugel liegt `ballTurns` volle Umdrehungen davor (gegenläufig).
+  Danach läuft die Kugel mit dem Rotor mit – dadurch ist das Ergebnis mathematisch garantiert und nicht vom Zufall der Animation abhängig.
+  Phasen wie in `wheel-stage.js`: Bahn (0–45 %), Auslauf (45–68 %), Abwurf mit Prellsprung (68–84 %), Mitlauf (84–100 %).
+- **`wheelScene.ts`** (three.js, ohne React): Renderer mit Schatten, ACES-Tonemapping, Studio-Licht aus `wheel-stage.js`,
+  GLB über `GLTFLoader`, Knoten `Rotor`/`Ball` per Namen. Im Ruhezustand dreht der Kessel langsam weiter und die Kugel liegt im letzten Fach.
+  Nach der Drehung fährt die Kamera in die Draufsicht, beim nächsten Wurf zurück. Maus-Drag (linke Taste) dreht die Ansicht mit Nachlauf.
+  `dispose()` gibt Geometrien, Materialien, Renderer, Listener und ResizeObserver frei.
+- **`RouletteWheel3D.tsx`**: lädt `wheelScene` per `import()` erst im Browser → three.js landet in einem eigenen Chunk und wird
+  nie serverseitig ausgeführt. Status `loading` / `ready` / `fallback`; ohne WebGL oder bei Ladefehler dreht ein CSS-Ersatz-Kessel 2.2 s.
+- **Einbindung:** `RouletteScreen` nutzt `useRoulette({ spinDuration: null })` → die Runde wird erst ausgewertet, wenn `onSpinEnd`
+  der 3D-Bühne kommt. `finishSpin` ist idempotent (Timer und Kessel könnten beide melden).
+- Modell: `public/models/roulette-wheel.glb` (Export aus Blender), Quelldatei `assets/blender/RouletteRad.blend`.
+
+**Ergebnis Green-Phase:** 108/108 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| In welche Richtung sind die Zahlen im Blender-Modell angeordnet? Eine falsche Richtung würde die Kugel im falschen Fach landen lassen. | GLB-Binärdaten per Node-Skript ausgewertet: Schwerpunkte der roten/schwarzen Fächer ergeben die Richtung (`90° − k·360°/37`). **Gegenprobe:** Die Breite der Zahlen-Glyphen je Fach – alle einstelligen Zahlen (≤ 2.01°) liegen exakt in den vorhergesagten Fächern, alle zweistelligen sind ≥ 3.98° breit. |
+| Radius/Höhe von Kugelbahn und Fächern waren unbekannt. | Vertices von `Bowl` und `Pockets` nach Radius gruppiert und die Oberflächenhöhe gemessen (Bahn r≈0.365, Fach r≈0.192). |
+| jsdom hat kein WebGL; three.js lässt sich in Unit-Tests nicht rendern. | Bewegungslogik in reine Funktionen ausgelagert (44 Tests), three.js-Modul in Komponententests gemockt, `getContext` im Test-Setup gestubbt. |
+| Bei der Kombination Timer + 3D-Ende könnte die Runde doppelt ausgewertet werden. | `finishSpin` prüft/leert den eingefrorenen Spin im Ref → idempotent. |
+| `next dev` (Next 16) erzeugt automatisch `AGENTS.md` und `CLAUDE.md` im Projekt. | Nicht Teil des Features → nicht committet (lässt sich mit `agentRules: false` in `next.config.ts` abschalten). |
+| Visuelle Kontrolle im Feature-Branch nicht möglich, da Landing/Kauf/Lobby in parallelen Branches liegen. | Visuelle Abnahme erfolgt nach der Integration im `dev`-Branch (siehe `dev-integration.md`). |
