@@ -13,15 +13,6 @@ import { PokerScreen } from "@/components/screens/poker/PokerScreen";
 import { RouletteScreen } from "@/components/screens/roulette/RouletteScreen";
 import type { Screen, WalletState } from "@/lib/wallet";
 
-/** Platzhalter für Bildschirme, die in eigenen Feature-Branches umgesetzt werden. */
-function Placeholder({ title }: { title: string }) {
-  return (
-    <main style={{ flex: 1, display: "grid", placeItems: "center", padding: 56 }}>
-      <h1 className="serif" style={{ fontSize: 44 }}>{title}</h1>
-    </main>
-  );
-}
-
 function renderScreen(screen: Screen): ReactNode {
   switch (screen) {
     case "landing":
