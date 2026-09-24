@@ -31,3 +31,12 @@ Fehler verständlich angezeigt, ein erfolgreicher Kauf wird per Toast bestätigt
 - CHF 25 ergibt 250 Jetons; CHF 12,55 ergibt 125 Jetons (abgerundet).
 - Ungültige Eingaben zeigen die passende Meldung und färben das Eingabefeld rot; Tippen entfernt die Meldung.
 - Nach dem Kauf: Guthaben erhöht, Toast „250 Jetons gekauft“ / „Für CHF 25.00 – viel Erfolg am Tisch!“, Wechsel zur Lobby.
+
+## 2. Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `lib/purchase.test.ts` | `parseAmount` (Punkt/Komma, Fremdzeichen, NaN), `previewChips` (Kurs, Abrunden, ungültig → 0), `validatePurchase` (gültig, Grenzen 5 / 500, leer, ungültig, 0, 4.99, 500.01) |
+| `components/screens/buy/BuyScreen.test.tsx` | Texte/Kurs/Limits, Live-Vorschau, Schnellwahl, Fehleranzeige + Zurücksetzen beim Tippen, erfolgreicher Kauf (Guthaben, Toast, Lobby), Enter-Taste, Jeton-Legende |
+
+**Ergebnis Red-Phase:** 2 Testdateien rot (`./purchase` fehlt, Kaufbildschirm fehlt). ✔
