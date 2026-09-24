@@ -23,3 +23,12 @@ Roulette oder verlässt das Casino über die Kasse.
 - Klick auf Poker/Roulette mit genügend Jetons öffnet den Tisch.
 - Mit zu wenig Jetons erscheint ein Warn-Toast („Zu wenig Jetons“) und die Lobby bleibt offen.
 - „Auszahlen & verlassen“ führt zur Kasse.
+
+## 2. Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `lib/lobby.test.ts` | Mindestguthaben, Zutritt erlaubt, Poker < 20 und Roulette < 10 verweigert inkl. Texte |
+| `components/screens/lobby/LobbyScreen.test.tsx` | Schritt/Titel/Guthaben/CHF-Wert, beide Spielkarten, Poker öffnen, Roulette öffnen, Warnung bei zu wenig Jetons, Auszahlung |
+
+**Ergebnis Red-Phase:** 2 Testdateien rot. ✔
