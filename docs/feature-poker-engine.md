@@ -57,3 +57,29 @@ so lassen sich Showdown-Situationen exakt nachstellen. Der Zufall der Bots wird 
 **Invariante:** Mehrere Tests prüfen, dass die Summe aller Jetons am Tisch unverändert bleibt.
 
 **Ergebnis Red-Phase:** 4 Testdateien rot (Module fehlen). ✔
+
+## 3. Umsetzung (Green)
+
+- **Unveränderlichkeit:** `applyAction` und `advanceRunout` klonen den Zustand (`players`, `deck`, `community`)
+  und geben einen neuen zurück. Dadurch kann die UI den Zustand direkt in React-State speichern und vorher/nachher vergleichen
+  (z. B. für die Jeton-Flug-Animation).
+- **Score-Kodierung:** `eval5` kodiert Kategorie und bis zu 5 Tiebreaker als Zahl zur Basis 16
+  (`score = cat·16⁵ + t0·16⁴ + …`) – ein einziger Zahlenvergleich entscheidet über Sieger inkl. Kicker.
+- **Phasen:** `bet` (Setzrunde), `runout` (niemand kann mehr setzen, UI ruft `advanceRunout` mit Verzögerung auf), `done`.
+- **Side-Pots:** `buildPots` bildet Stufen aus den unterschiedlichen `committed`-Beträgen; jeder Pot hat eine eigene Liste
+  berechtigter Spieler. Eingezahlte Jetons von Spielern, die gepasst haben, fliessen in den Pot ihrer Stufe.
+- **Bots:** `botDecision` ist eine reine Funktion mit injizierbarem Zufall (Handstärke + Rauschen ±0.08, Pot-Odds, Bet-Sizing ½ bzw. ¾ Pot).
+- **Ergebnis:** `state.result` enthält alles, was das Ergebnis-Overlay braucht (Titel, Farbe, Zeilen je Spieler, Gewinner-Sitze).
+
+**Ergebnis Green-Phase:** 49/49 Poker-Tests (88 gesamt) grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| Der Prototyp verteilt den Restjeton eines Split-Pots zuerst an den **Dealer**. Nach den Regeln geht er an den ersten Gewinner **links** vom Dealer. | Sortierung über `(i − dealer − 1 + 4) % 4` statt `(i − dealer + 4) % 4`; per Test abgesichert. |
+| Im Prototyp musste bei „alle All-In“ ein einzelner übrig gebliebener Spieler alleine weiter „schieben“. | Neue Phase `runout`: wenn höchstens ein Spieler handeln kann, werden die Karten ohne Setzrunde aufgedeckt. |
+| Ein Spieler kann bereits durch den Big Blind All-In sein und wäre trotzdem als Erster „am Zug“. | Nach dem Posten der Blinds wird `toAct` auf den nächsten handlungsfähigen Spieler gesetzt (Test „Blind-All-In“). |
+| Kurzes All-In-Raise hätte die Mindesterhöhung verkleinert. | `minRaise = max(BB, Erhöhung, bisheriges minRaise)`. |
+| Tests für Showdowns brauchen bekannte Karten. | Deck-Injektion in `newHand` + Test-Helfer `rig()`; `newDeck(rng)` für reproduzierbares Mischen. |
+| Bash-Heredoc mit `python` im Test-Fix brach ab (Python-Heredoc nicht terminiert). | Datei trotzdem korrekt ersetzt; künftig Dateien nur noch mit dem Editor ändern. |
