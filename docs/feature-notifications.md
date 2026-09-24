@@ -36,3 +36,23 @@ melden nur Ereignisse über einen Event-Bus („Spiel-Events lösen die Benachri
 | `components/notifications/NotificationProvider.test.tsx` | Provider + `useNotify` + ToastStack | Anzeige über Hook, Anzeige über `gameEvents`, Auto-Entfernen nach 4600 ms (Fake-Timer), Abmelden beim Unmount |
 
 **Ergebnis Red-Phase:** 3 neue Testdateien schlagen fehl (Module fehlen), die 3 bestehenden bleiben grün. ✔
+
+## 3. Umsetzung (Green)
+
+- `createEventBus` speichert pro Ereignistyp ein `Set` von Handlern; `emit` iteriert über eine Kopie,
+  damit sich ein Handler während des Aufrufs abmelden kann.
+- `gameEvents` ist die app-weite Instanz mit dem Ereignis `notify`.
+- `NotificationProvider` abonniert `gameEvents` in einem `useEffect` und meldet sich beim Unmount ab
+  (inkl. Aufräumen offener Timer). `useNotify()` funktioniert auch ausserhalb des Providers,
+  indem es direkt auf den Bus publiziert – so sind Spiel-Komponenten lose gekoppelt.
+- `ToastStack` übernimmt Masse, Farben und die `toastIn`-Animation 1:1 aus dem Prototyp (CSS-Modul).
+
+**Ergebnis Green-Phase:** 19/19 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| Der Handler-Typ ist pro Ereignis unterschiedlich; eine `Map<Key, Set<Handler<E[K]>>>` lässt sich in TypeScript nicht direkt ausdrücken. | Intern `Handler<never>` speichern und an den öffentlichen, generischen Methoden typisieren – die API bleibt vollständig typsicher. |
+| Timer-Test: Toast muss genau nach 4600 ms verschwinden. | `vi.useFakeTimers()` und `advanceTimersByTime(4599)` / `(2)` prüfen beide Seiten der Grenze. |
+| React-Warnung „ref value will likely have changed“ beim Cleanup | Timer-Array vor dem Cleanup in eine lokale Variable kopieren. |
