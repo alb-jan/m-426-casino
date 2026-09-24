@@ -22,3 +22,13 @@ drei Feature-Karten und die Schaltfläche „Casino betreten“, die zum Jetons-
 - Titel „Casino Goldenes Ass“ und Untertitel „Poker & Roulette“ sind sichtbar.
 - Drei Feature-Karten und vier schwebende Jetons werden angezeigt.
 - Klick auf „Casino betreten“ wechselt zum Bildschirm `buy`.
+
+## 2. Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `components/screens/landing/LandingScreen.test.tsx` | Titel/Untertitel, 3 Feature-Karten, 4 schwebende Jetons (20/50/500/10), CTA „Casino betreten“ → Kaufbildschirm inkl. Header |
+
+Die Tests rendern die ganze `CasinoApp` (Integrationstest), damit auch der Bildschirmwechsel geprüft wird.
+
+**Ergebnis Red-Phase:** Testdatei rot (`landingContent` fehlt). ✔
