@@ -35,3 +35,16 @@ Die Logik kommt vollständig aus `lib/poker` – die UI steuert nur Zeitabläufe
 - Das Header-Guthaben entspricht immer dem eigenen Stack am Tisch.
 - Am Handende erscheint das Overlay und ein Toast; „Nächste Runde“ rotiert den Dealer.
 - Mit weniger als 20 Jetons führt der Button im Overlay zurück zur Spielauswahl.
+
+## 2. Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `lib/poker/view.test.ts` | Strassen-Namen, Mitgehen/Schieben/All-In-Label, Erhöhen vs. Setzen, Startbetrag, ±-Schritte mit Grenzen, eigene Hand, Sitz-Status (Blind, Am Zug, Gepasst, All-In), Toast-Texte (Gewinn, Niederlage, ohne Showdown, Split) |
+| `components/screens/poker/PokerScreen.test.tsx` | Tisch/Spieler/Pot/Runde, offene vs. verdeckte Karten, automatische Bot-Züge + Aktionsleiste, ± Erhöhung, Header-Guthaben = Stack, Passen → Overlay + Toast + aufgedeckte Karten, Gewinn mit Drilling + nächste Runde mit neuem Dealer, zurück zur Lobby, All-In |
+
+**Test-Strategie für Zeitabläufe:** Fake-Timer (`vi.useFakeTimers`) und schrittweises Vorspulen in 500-ms-Schritten,
+damit React zwischen den Bot-Zügen die Effekte ausführen und neue Timer planen kann.
+Deck (`rigDeck`) und Zufall (`rng = () => 0.5`) werden per Props injiziert → die Bots verhalten sich deterministisch.
+
+**Ergebnis Red-Phase:** 2 Testdateien rot. ✔
