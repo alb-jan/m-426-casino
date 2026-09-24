@@ -9,6 +9,7 @@ import { BuyScreen } from "@/components/screens/buy/BuyScreen";
 import { ExitScreen } from "@/components/screens/exit/ExitScreen";
 import { LandingScreen } from "@/components/screens/landing/LandingScreen";
 import { LobbyScreen } from "@/components/screens/lobby/LobbyScreen";
+import { PokerScreen } from "@/components/screens/poker/PokerScreen";
 import type { Screen, WalletState } from "@/lib/wallet";
 
 /** Platzhalter für Bildschirme, die in eigenen Feature-Branches umgesetzt werden. */
@@ -29,7 +30,7 @@ function renderScreen(screen: Screen): ReactNode {
     case "lobby":
       return <LobbyScreen />;
     case "poker":
-      return <Placeholder title="Poker" />;
+      return <PokerScreen />;
     case "roulette":
       return <Placeholder title="Roulette" />;
     case "exit":
