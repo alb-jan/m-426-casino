@@ -6,6 +6,9 @@ afterEach(() => {
   cleanup();
 });
 
+// jsdom kennt kein WebGL/Canvas – getContext liefert still null statt einer "Not implemented"-Meldung.
+HTMLCanvasElement.prototype.getContext = (() => null) as unknown as HTMLCanvasElement["getContext"];
+
 // next/font/google funktioniert nur im Next-Compiler – im Test reicht ein Stub.
 vi.mock("next/font/google", () => {
   const font = (name: string) => () => ({
