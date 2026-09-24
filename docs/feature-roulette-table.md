@@ -39,3 +39,23 @@ Zufall per Prop: `rngFor(n) = () => (n + 0.5) / 37` liefert exakt die Zahl `n`. 
 damit sie trotz Einsatz-Marker eindeutig auffindbar sind (gleichzeitig besser für Screenreader).
 
 **Ergebnis Red-Phase:** Testdatei rot. ✔
+
+## 3. Umsetzung (Green)
+
+- **`useRoulette`** trennt „Gewinnzahl bestimmen“ (sofort bei `spin()`, in `pending`) von „auswerten“ (`finishSpin()`).
+  Standardmässig wertet ein Timer nach 2.2 s aus; mit `spinDuration: null` übernimmt später der 3D-Kessel das Timing.
+  Die Einsätze der Drehung werden in einem Ref eingefroren, damit spätere Renders sie nicht verändern.
+- Einsätze werden beim Setzen sofort vom Wallet abgebucht (`adjustChips(-denom)`), die Auszahlung beim Auswerten gutgeschrieben –
+  „Verbleibend“ und Header stimmen dadurch immer.
+- `BettingBoard` rendert Zahlen aus `GRID` mit Farbe aus `numberBg`, Marker-Stile über CSS-Modules-`composes`.
+- `ResultPanel` zeigt die drei Zustände des Prototyps inkl. `settleGlow`-Animation bei der Gewinnzahl.
+
+**Ergebnis Green-Phase:** 58/58 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| `getByText("Schwarz")` war mehrdeutig, weil das Aussen-Feld „Schwarz“ denselben Text hat. | Farbname im Ergebnis über `data-testid="spin-color"` geprüft (Test präzisiert, Verhalten unverändert). |
+| Einsatz-Marker verändert den zugänglichen Namen eines Zahlenfelds („17 20“). | `aria-label` für alle Felder („Zahl 17“, „Rot“, „Jeton 50“). |
+| Jeton-Wahl braucht einen Zustand für Screenreader. | `aria-pressed` auf dem gewählten Jeton. |

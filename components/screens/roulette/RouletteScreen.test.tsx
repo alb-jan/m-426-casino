@@ -87,7 +87,7 @@ describe("RouletteScreen", () => {
 
     act(() => vi.advanceTimersByTime(2200));
     expect(screen.getByTestId("spin-number")).toHaveTextContent("17");
-    expect(screen.getByText("Schwarz")).toBeInTheDocument();
+    expect(screen.getByTestId("spin-color")).toHaveTextContent("Schwarz");
     expect(screen.getByTestId("spin-net")).toHaveTextContent("+340 Jetons");
     expect(balance()).toHaveTextContent("1’340");
     expect(screen.getByText("Gewonnen!")).toBeInTheDocument();
@@ -100,7 +100,7 @@ describe("RouletteScreen", () => {
     click("Rot");
     click("Drehen");
     act(() => vi.advanceTimersByTime(2200));
-    expect(screen.getByText("Grün · Zéro")).toBeInTheDocument();
+    expect(screen.getByTestId("spin-color")).toHaveTextContent("Grün · Zéro");
     expect(screen.getByTestId("spin-net")).toHaveTextContent("−10 Jetons");
     expect(screen.getByText("Verloren")).toBeInTheDocument();
   });
