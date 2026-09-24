@@ -49,3 +49,24 @@ Wir bilden das als Zustand (`screen`) in einem React-Context ab, statt eigene Ne
 | `components/CasinoApp.test.tsx` | App-Shell | kein Header/Footer auf der Landingpage, sonst sichtbar |
 
 **Ergebnis Red-Phase:** 5 neue Testdateien rot (Module fehlen), 6 bestehende grün. ✔
+
+## 3. Umsetzung (Green)
+
+- `lib/chips.ts` und `lib/wallet.ts` sind reine Funktionen ohne React – dadurch schnell und isoliert testbar.
+- `CasinoProvider` kapselt `useReducer(walletReducer)`; die Aktionsfunktionen werden einmalig mit `useMemo`
+  erzeugt, damit Konsumenten stabile Referenzen erhalten (wichtig für `useEffect`-Abhängigkeiten in den Spielen).
+- `Chip` bildet die Jetons aus dem Prototyp nach (Rand = `conic-gradient` mit 8 weissen Streifen, Innenkreis gestrichelt).
+- `Header` (sticky, Blur-Hintergrund) und `Footer` 1:1 nach Design; Header-Styles als CSS-Modul inkl. Hover und
+  einer Mobile-Anpassung (< 720px).
+- `CasinoApp` ist die App-Shell: `NotificationProvider` → `CasinoProvider` → Hintergrund-Verlauf, Header, Bildschirm, Footer.
+  Noch nicht umgesetzte Bildschirme sind Platzhalter, die in den Sprint-2-Branches ersetzt werden.
+
+**Ergebnis Green-Phase:** 39/39 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| Bash-Heredoc mit vielen Sonderzeichen (`’`, Backticks) brach beim Anlegen der Dateien ab. | Dateien direkt mit dem Editor geschrieben statt per Shell-Skript. |
+| `useCasino()` ausserhalb des Providers würde still `null` liefern. | Hook wirft eine sprechende Fehlermeldung – Fehler fallen im Test sofort auf. |
+| Header-Jeton hat im Design einen anderen Schatten und Innenabstand als die Tisch-Jetons. | `Chip` erhält optionale Props `inset`, `fontSize`, `style`. |
