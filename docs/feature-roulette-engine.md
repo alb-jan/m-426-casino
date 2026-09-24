@@ -45,3 +45,20 @@ Bei **Zéro (0)** verlieren alle Aussen-Einsätze; nur ein Einsatz direkt auf 0 
 | `lib/roulette/rules.test.ts` | Kessel: 37 eindeutige Fächer, Reihenfolge, Rot/Schwarz abwechselnd; Farben/Namen/Hintergründe; Tableau-Anordnung; Einsätze summieren (unveränderlich); Auszahlung Plein/Dutzend/einfache Chancen; Zéro-Regel; Zufallszahl 0–36; Nettogewinn; Toast-Texte für Gewinn, Teilgewinn, Verlust |
 
 **Ergebnis Red-Phase:** Testdatei rot (`./rules` fehlt). ✔
+
+## 3. Umsetzung (Green)
+
+- Einsätze als unveränderliches Objekt `Bets = Partial<Record<BetKey, number>>`; `BetKey` ist ein Template-Literal-Typ
+  (`n:${number}` oder Aussen-Einsatz) → Tippfehler bei Schlüsseln fallen schon beim Kompilieren auf.
+- `payout` behandelt Plein-Einsätze separat; Aussen-Einsätze über `outsideWins` (Multiplikator 2 bzw. 3) und nur für Zahlen ≠ 0.
+- `spinNumber` begrenzt auf 36, falls ein Zufallsgenerator genau 1 liefern sollte.
+- `WHEEL_ORDER` wird später vom 3D-Kessel verwendet, um das Zielfach der Kugel zu bestimmen.
+
+**Ergebnis Green-Phase:** 51/51 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| `Object.entries` liefert `[string, number \| undefined]` – TypeScript verliert den Schlüsseltyp. | Einmaliger Cast auf `[BetKey, number][]` in `payout`; die öffentliche API bleibt typsicher. |
+| Der Prototyp nennt „Dutzend / Kolonne 2 : 1“, bietet aber nur Dutzend-Felder an. | Umfang bewusst wie im Design (nur Dutzende); Kolonnen als mögliche Erweiterung im Backlog vermerkt. |
