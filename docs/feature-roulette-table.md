@@ -28,3 +28,14 @@ Der 3D-Kessel folgt im Branch `feature/roulette-3d-wheel`.
 - Mehrere Einsätze pro Runde sind möglich; „Einsätze löschen“ erstattet alles zurück.
 - „Drehen“ ohne Einsatz zeigt eine Warnung; während der Drehung sind Einsätze gesperrt.
 - Nach der Drehung: Gewinnzahl, Farbe, Nettogewinn, Verlauf und Toast; das Guthaben enthält die Auszahlung.
+
+## 2. Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `components/screens/roulette/RouletteScreen.test.tsx` | Titel/Tableau (alle 37 Zahlen, Aussen-Felder, Quoten), Setzen mit Jeton-Wert + Abzug + Marker, Warnung bei zu wenig Guthaben, Einsätze löschen, Drehen ohne Einsatz, Drehung mit Sperre → Gewinnzahl/Farbe/Netto/Guthaben/Toast/Verlauf, Verlust bei Zéro |
+
+Zufall per Prop: `rngFor(n) = () => (n + 0.5) / 37` liefert exakt die Zahl `n`. Zahlenfelder haben `aria-label="Zahl n"`,
+damit sie trotz Einsatz-Marker eindeutig auffindbar sind (gleichzeitig besser für Screenreader).
+
+**Ergebnis Red-Phase:** Testdatei rot. ✔
