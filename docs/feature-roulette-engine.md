@@ -37,3 +37,11 @@ Bei **Zéro (0)** verlieren alle Aussen-Einsätze; nur ein Einsatz direkt auf 0 
 - Alle Quoten der Tabelle werden korrekt ausbezahlt, mehrere Einsätze werden summiert.
 - Zéro lässt alle Aussen-Einsätze verlieren.
 - Der Kessel enthält jede Zahl genau einmal; es gibt 18 rote und 18 schwarze Zahlen.
+
+## 2. Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `lib/roulette/rules.test.ts` | Kessel: 37 eindeutige Fächer, Reihenfolge, Rot/Schwarz abwechselnd; Farben/Namen/Hintergründe; Tableau-Anordnung; Einsätze summieren (unveränderlich); Auszahlung Plein/Dutzend/einfache Chancen; Zéro-Regel; Zufallszahl 0–36; Nettogewinn; Toast-Texte für Gewinn, Teilgewinn, Verlust |
+
+**Ergebnis Red-Phase:** Testdatei rot (`./rules` fehlt). ✔
