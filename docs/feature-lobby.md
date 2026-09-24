@@ -32,3 +32,19 @@ Roulette oder verlässt das Casino über die Kasse.
 | `components/screens/lobby/LobbyScreen.test.tsx` | Schritt/Titel/Guthaben/CHF-Wert, beide Spielkarten, Poker öffnen, Roulette öffnen, Warnung bei zu wenig Jetons, Auszahlung |
 
 **Ergebnis Red-Phase:** 2 Testdateien rot. ✔
+
+## 3. Umsetzung (Green)
+
+- Zutrittsregeln in `lib/lobby.ts` (rein, testbar); `LobbyScreen` meldet eine Verweigerung als `warn`-Toast.
+- Spielkarten sind echte `<button>`-Elemente (Tastatur-bedienbar); der Hover-Effekt (Rand gold, −3 px) liegt auf der inneren Karte.
+- `GameArt`: Mini-Spielkarten und der Roulettekessel aus drei Ebenen (`conic-gradient` Zahlenkranz, Holzring, Messingkegel) + Kugel – 1:1 aus dem Prototyp.
+- „Auszahlen & verlassen“ ruft `cashOut()` aus dem Wallet auf, der Betrag wird dort gespeichert.
+
+**Ergebnis Green-Phase:** 49/49 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| Das Design verwendet `style-hover` auf einem Kind-Element des Buttons. | CSS-Selektor `.gameBtn:hover .gameCard` statt Inline-Style. |
+| Der Titel „Poker“/„Roulette“ ist ein `h2` innerhalb eines Buttons – der Test sucht den Button per Name. | Button per Teiltext `Platz nehmen →` / `Setzen →` finden (Regex), Überschrift separat per Rolle `heading`. |
