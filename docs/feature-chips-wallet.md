@@ -37,3 +37,15 @@ Wir bilden das als Zustand (`screen`) in einem React-Context ab, statt eigene Ne
 - `adjustChips` kann das Guthaben nie negativ machen.
 - Der Header zeigt das Guthaben formatiert (`1’000 Jetons`), die Zurück-Schaltfläche nur in Poker/Roulette.
 - Auf der Landingpage werden Header und Footer nicht angezeigt.
+
+## 2. Tests (Red)
+
+| Testdatei | Getestete Einheit | Fälle |
+|---|---|---|
+| `lib/chips.test.ts` | `calculateChips`, `chipView`, `chipStack` | Greedy-Zerlegung, Aufrunden von Resten, Randstreifen, Fallback, Stapel-Limit |
+| `lib/wallet.test.ts` | Konstanten, `walletReducer`, `chipsToChf` | Startzustand, Navigation, Einzahlung, Guthaben nie negativ, Auszahlung, Neustart |
+| `components/chips/Chip.test.tsx` | `Chip` | Grösse und Wert |
+| `components/layout/Header.test.tsx` | `Header` + `CasinoProvider` | Guthaben formatiert, Zurück-Button nur im Spiel und führt zur Lobby |
+| `components/CasinoApp.test.tsx` | App-Shell | kein Header/Footer auf der Landingpage, sonst sichtbar |
+
+**Ergebnis Red-Phase:** 5 neue Testdateien rot (Module fehlen), 6 bestehende grün. ✔
