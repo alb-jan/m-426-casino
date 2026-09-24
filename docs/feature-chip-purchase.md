@@ -40,3 +40,21 @@ Fehler verständlich angezeigt, ein erfolgreicher Kauf wird per Toast bestätigt
 | `components/screens/buy/BuyScreen.test.tsx` | Texte/Kurs/Limits, Live-Vorschau, Schnellwahl, Fehleranzeige + Zurücksetzen beim Tippen, erfolgreicher Kauf (Guthaben, Toast, Lobby), Enter-Taste, Jeton-Legende |
 
 **Ergebnis Red-Phase:** 2 Testdateien rot (`./purchase` fehlt, Kaufbildschirm fehlt). ✔
+
+## 3. Umsetzung (Green)
+
+- `lib/purchase.ts` enthält die komplette Validierung als reine Funktion; der Bildschirm ruft nur `validatePurchase`
+  auf und entscheidet anhand von `ok` – damit sind UI und Geschäftsregeln getrennt.
+- `BuyScreen` hält nur den Eingabetext und die Fehlermeldung als lokalen State; das Guthaben wird über
+  `deposit()` im `CasinoProvider` verbucht, der Toast über `useNotify()` (Observer) ausgelöst.
+- `ChipLegend` zeigt die Jetons aufsteigend (10 → 500) mit Frankengegenwert (`formatChf(d / RATE)`).
+- Layout zweispaltig (1.15fr / .85fr) wie im Prototyp, unter 860 px einspaltig.
+
+**Ergebnis Green-Phase:** 54/54 Tests grün, Typecheck und Lint fehlerfrei.
+
+## 4. Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| Gleitkomma: `4.35 * 10` ergibt `43.49999…` → `floor` würde 43 statt 43.5 → 43 liefern, bei Beträgen wie `0.29 * 10 = 2.8999…` aber einen Jeton zu wenig. | Vor dem Abrunden auf 3 Nachkommastellen runden: `floor(round(chf × RATE × 1000) / 1000)`. |
+| Fehlermeldung soll beim Tippen verschwinden, aber nicht bei jedem Rendern. | Gemeinsame `pick()`-Funktion für Eingabe und Schnellwahl setzt Betrag und leert den Fehler. |

@@ -5,6 +5,7 @@ import { CasinoProvider, useCasino } from "@/components/casino/CasinoProvider";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
+import { BuyScreen } from "@/components/screens/buy/BuyScreen";
 import type { Screen, WalletState } from "@/lib/wallet";
 
 /** Platzhalter für Bildschirme, die in eigenen Feature-Branches umgesetzt werden. */
@@ -21,7 +22,7 @@ function renderScreen(screen: Screen): ReactNode {
     case "landing":
       return <Placeholder title="Casino Goldenes Ass" />;
     case "buy":
-      return <Placeholder title="Jetons kaufen" />;
+      return <BuyScreen />;
     case "lobby":
       return <Placeholder title="Spielauswahl" />;
     case "poker":

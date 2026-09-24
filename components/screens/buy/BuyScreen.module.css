@@ -1,0 +1,81 @@
+.main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 56px 32px; }
+.grid { width: 100%; max-width: 1080px; display: grid; grid-template-columns: 1.15fr .85fr; gap: 28px; align-items: start; }
+
+.card {
+  padding: 38px 40px 34px; border-radius: 22px;
+  background: linear-gradient(180deg,rgba(18,42,33,.92),rgba(10,23,18,.92));
+  border: 1px solid rgba(232,185,74,.2); box-shadow: 0 30px 70px rgba(0,0,0,.45);
+}
+.step { font-size: 11px; letter-spacing: .28em; text-transform: uppercase; color: #E8B94A; }
+.title { margin: 14px 0 10px; font-family: var(--serif); font-size: 46px; line-height: 1.05; font-weight: 700; }
+.intro { margin: 0 0 30px; font-size: 15px; line-height: 1.6; color: #A9B5AC; max-width: 46ch; text-wrap: pretty; }
+.label { display: block; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #8FA096; margin-bottom: 10px; }
+
+.inputWrap {
+  display: flex; align-items: center; gap: 14px; padding: 0 20px; border-radius: 14px;
+  background: rgba(7,16,13,.7); border: 1px solid;
+}
+.currency { font-family: var(--mono); font-size: 19px; font-weight: 600; letter-spacing: .06em; color: #8FA096; }
+.input {
+  flex: 1; min-width: 0; background: transparent; border: none; outline: none; color: #FFF8E7;
+  font-family: var(--mono); font-size: 34px; font-weight: 600; padding: 18px 0;
+}
+.input::placeholder { color: rgba(255,248,231,.35); }
+.unit { font-size: 13px; color: #8FA096; }
+
+.quick { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.quickBtn {
+  padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(232,185,74,.3); background: rgba(232,185,74,.07);
+  color: #E8B94A; font-family: var(--mono); font-size: 14px; font-weight: 600;
+}
+.quickBtn:hover { background: rgba(232,185,74,.18); }
+
+.rateBox {
+  margin-top: 22px; padding: 18px 20px; border-radius: 14px; background: rgba(232,185,74,.06);
+  border: 1px dashed rgba(232,185,74,.32); display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+.rateCol { display: flex; flex-direction: column; gap: 4px; }
+.boxLabel { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #8FA096; }
+.rateValue { font-family: var(--mono); font-size: 19px; font-weight: 600; color: #FFF8E7; }
+.preview { font-family: var(--mono); font-size: 30px; font-weight: 600; color: #E8B94A; line-height: 1; }
+
+.error {
+  margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; padding: 13px 16px; border-radius: 12px;
+  background: rgba(226,87,76,.1); border: 1px solid rgba(226,87,76,.42);
+}
+.errorIcon {
+  width: 20px; height: 20px; border-radius: 50%; flex: none; background: #E2574C; color: #0A1712;
+  font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.errorText { font-size: 13.5px; color: #F4B9B3; line-height: 1.45; }
+
+.buy {
+  margin-top: 26px; width: 100%; padding: 20px; border-radius: 14px; border: none;
+  background: linear-gradient(160deg,#F0C75C,#C79A34); color: #0A1712; font-size: 16.5px; font-weight: 700;
+  letter-spacing: .01em; box-shadow: 0 14px 34px rgba(232,185,74,.26);
+}
+.buy:hover { filter: brightness(1.07); }
+.buy:active { transform: translateY(1px); }
+.limits { margin: 14px 0 0; font-size: 12px; color: #75857B; text-align: center; }
+
+.aside { display: flex; flex-direction: column; gap: 16px; }
+.legend { padding: 26px 28px; border-radius: 20px; background: rgba(12,26,20,.75); border: 1px solid rgba(242,239,230,.09); }
+.flow { padding: 24px 28px; border-radius: 20px; background: rgba(12,26,20,.5); border: 1px solid rgba(242,239,230,.07); }
+.asideTitle { margin: 0; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #8FA096; }
+.legendList { display: flex; flex-direction: column; gap: 14px; }
+.legendRow { display: flex; align-items: center; gap: 14px; }
+.legendChip {
+  width: 44px; height: 44px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 14px; font-weight: 600; border: 3px dashed rgba(255,255,255,.45);
+  box-shadow: 0 6px 16px rgba(0,0,0,.4);
+}
+.legendText { display: flex; flex-direction: column; }
+.legendName { font-size: 14px; font-weight: 600; color: #F2EFE6; }
+.legendValue { font-size: 12.5px; color: #8FA096; }
+.flowList { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 9px; font-size: 13.5px; color: #A9B5AC; line-height: 1.5; }
+
+@media (max-width: 860px) {
+  .grid { grid-template-columns: 1fr; }
+  .main { padding: 32px 16px; }
+  .card { padding: 28px 22px; }
+}
