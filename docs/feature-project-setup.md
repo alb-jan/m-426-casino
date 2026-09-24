@@ -29,3 +29,18 @@ und das globale Layout (Schriften, Hintergrund, Animationen).
 - `formatChf(12.5)` liefert `12.50`, `formatChf(1000)` liefert `1’000.00`.
 - `formatSigned(50)` → `+50`, `formatSigned(-50)` → `−50`, `formatSigned(0)` → `±0`.
 - Die Metadaten der App tragen den Titel „Casino Goldenes Ass“.
+
+## 2. Tests (Red)
+
+Geschrieben **vor** der Umsetzung, Commit `test(setup): ...`.
+
+| Testdatei | Getestete Einheit | Fälle |
+|---|---|---|
+| `lib/format.test.ts` | `formatNumber`, `formatChf`, `formatSigned` | Tausendertrennzeichen `’`, Rundung, 2 Nachkommastellen, Vorzeichen `+`/`−`/`±` |
+| `lib/theme.test.ts` | `COLORS` | Hauptfarben entsprechen dem Prototyp |
+| `app/layout.test.tsx` | `metadata`, `fontVariables` | Titel „Casino Goldenes Ass“, alle drei Schriften als CSS-Variablen |
+
+Test-Infrastruktur im selben Commit: `vitest.config.mts`, `vitest.setup.ts`, npm-Skripte `test`, `test:watch`, `typecheck`.
+
+**Ergebnis Red-Phase:** `npm test` → 3 von 3 Testdateien schlagen fehl
+(`Failed to resolve import "./format"` usw.), da die Module noch nicht existieren. ✔ erwartet.
