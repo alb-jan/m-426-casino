@@ -26,3 +26,13 @@ melden nur Ereignisse über einen Event-Bus („Spiel-Events lösen die Benachri
 - Ein Toast verschwindet nach 4600 ms automatisch.
 - Ein `gameEvents.emit('notify', …)` irgendwo in der App zeigt einen Toast an.
 - Titel, Text und Icon werden gemäss Art (`win/lose/info/warn`) eingefärbt.
+
+## 2. Tests (Red)
+
+| Testdatei | Getestete Einheit | Fälle |
+|---|---|---|
+| `lib/events.test.ts` | `createEventBus` | mehrere Abonnenten, Typ-Filter, `unsubscribe`, `clear` |
+| `lib/notifications.test.ts` | `TOAST_SKINS`, `createToast`, `addToast` | Farben/Icons, neueste zuoberst, max. 4, keine Mutation |
+| `components/notifications/NotificationProvider.test.tsx` | Provider + `useNotify` + ToastStack | Anzeige über Hook, Anzeige über `gameEvents`, Auto-Entfernen nach 4600 ms (Fake-Timer), Abmelden beim Unmount |
+
+**Ergebnis Red-Phase:** 3 neue Testdateien schlagen fehl (Module fehlen), die 3 bestehenden bleiben grün. ✔
