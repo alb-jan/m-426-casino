@@ -72,3 +72,21 @@ Deck (`rigDeck`) und Zufall (`rng = () => 0.5`) werden per Props injiziert → d
 | ESLint `react-hooks/exhaustive-deps`: Hilfsfunktion `later` wurde in mehreren `useCallback` verwendet. | `later` selbst als stabiles `useCallback` definiert und in die Abhängigkeitslisten aufgenommen. |
 | Blinds der ersten Hand wurden im StrictMode doppelt animiert. | `started`-Ref als Schutz im Mount-Effekt. |
 | Im Runout gibt es keinen Spieler „am Zug“. | ActionBar zeigt dann „Karten werden aufgedeckt“. |
+
+## 5. Bugfix aus der Integration (Iteration 2)
+
+**Befund (Sprint-Review im `dev`-Branch):** Im Entwicklungsmodus blieben die Blind-Jetons von Vera und Ruben an ihren Plätzen
+stehen, statt in den Pot zu fliegen. Nachvollzogen mit einem Headless-Chrome-Skript, das die Positionen der Jetons ausliest.
+
+**Ursache:** React-StrictMode führt Effekte zur Kontrolle zweimal aus (mount → cleanup → mount). Der Cleanup-Effekt löschte
+alle Timer (auch die der Blinds), und der `started`-Ref verhinderte, dass die Animation beim zweiten Mount neu geplant wurde.
+
+**Test zuerst (Red):** `components/screens/poker/ChipFlight.test.tsx` rendert den Tisch in `<StrictMode>` und erwartet,
+dass die Blinds nach 300 ms in der Tischmitte liegen → schlägt fehl (`17%` statt `50%`).
+
+**Lösung (Green):** Neuer State `hand` (Startzustand der aktuellen Hand). Ein Effekt mit Abhängigkeit `hand` animiert die Blinds
+und räumt im Cleanup die Jetons wieder ab. Beim doppelten Mount wird so einfach neu animiert; `startHand` setzt nur noch `hand`/`game`.
+Der `started`-Ref entfällt. → 111/111 Tests grün.
+
+**Lernpunkt:** Effekte müssen idempotent sein (Setup + Cleanup ergeben wieder den Ausgangszustand). Ein „nur einmal ausführen“-Ref
+kaschiert das Problem nur. Tests für Animationen deshalb zusätzlich in `<StrictMode>` ausführen.

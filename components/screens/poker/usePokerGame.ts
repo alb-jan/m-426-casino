@@ -51,10 +51,12 @@ export function usePokerGame({
   const { state: wallet, setChips, navigate } = useCasino();
   const notify = useNotify();
 
-  const [game, setGame] = useState<PokerState>(() =>
+  /** Startzustand der aktuellen Hand – Schlüssel für die Blind-Animation */
+  const [hand, setHand] = useState<PokerState>(() =>
     newHand([wallet.chips, BOT_STACK, BOT_STACK, BOT_STACK], 0, deckFactory()),
   );
-  const [raiseAmt, setRaiseAmt] = useState(() => defaultRaise(game));
+  const [game, setGame] = useState<PokerState>(hand);
+  const [raiseAmt, setRaiseAmt] = useState(() => defaultRaise(hand));
   const [flights, setFlights] = useState<FlyingChip[]>([]);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const ids = useRef({ id: 0, z: 10 });
@@ -108,22 +110,20 @@ export function usePokerGame({
     (stacks: number[], dealer: number) => {
       timers.current.forEach(clearTimeout);
       timers.current = [];
-      setFlights([]);
       const next = newHand(stacks, dealer, deckFactory());
+      setHand(next);
       setGame(next);
       setRaiseAmt(defaultRaise(next));
-      next.players.forEach((p, i) => fly(i, p.committed));
     },
-    [deckFactory, fly],
+    [deckFactory],
   );
 
-  // Blinds der ersten Hand animieren (Ref verhindert doppelte Ausführung im StrictMode)
-  const started = useRef(false);
+  // Blinds jeder neuen Hand animieren. Der Cleanup räumt die Jetons wieder ab – so ist der
+  // Effekt idempotent und funktioniert auch mit dem doppelten Mount des React-StrictMode.
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-    game.players.forEach((p, i) => fly(i, p.committed));
-  }, [game, fly]);
+    hand.players.forEach((p, i) => fly(i, p.committed));
+    return () => setFlights([]);
+  }, [hand, fly]);
 
   // Wallet-Guthaben = eigener Stack am Tisch
   useEffect(() => {
