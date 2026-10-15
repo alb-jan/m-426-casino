@@ -53,7 +53,6 @@ export function LandingScreen() {
         </div>
 
         <div className={styles.titleBlock}>
-          <span className={styles.est}>Est. 2026 · Schulprojekt</span>
           <h1 className={styles.title}>Casino Goldenes&nbsp;Ass</h1>
           <div className={styles.subRow}>
             <span className={styles.lineLeft} />
@@ -62,7 +61,7 @@ export function LandingScreen() {
           </div>
           <p className={styles.lead}>
             Zwei Tische, ein Guthaben, echtes Spielgefühl – ganz ohne echtes Geld. Kaufe Jetons in Franken, spiel
-            Texas Hold&apos;em gegen die Hausgegner oder setze am europäischen Kessel.
+            Texas Hold&apos;em gegen die Hausgegner oder setze beim Roulette.
           </p>
         </div>
 
@@ -81,12 +80,6 @@ export function LandingScreen() {
             </div>
           ))}
         </div>
-      </div>
-
-      <div className={styles.bottom}>
-        <span>Spielgeld in CHF</span>
-        <span>Ab 18 · reines Schulprojekt</span>
-        <span>Next.js · React · TypeScript</span>
       </div>
     </main>
   );

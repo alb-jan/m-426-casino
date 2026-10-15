@@ -6,7 +6,7 @@ export const LANDING_FEATURES = [
   },
   {
     glyph: "◉",
-    title: "Europäischer Kessel",
+    title: "Roulette",
     text: "Eine Null, 37 Fächer, mehrere Einsätze pro Runde und Quoten bis 35 : 1.",
   },
   {

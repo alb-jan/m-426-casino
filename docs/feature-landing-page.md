@@ -63,3 +63,6 @@ Die Tests rendern die ganze `CasinoApp` (Integrationstest), damit auch der Bilds
   (`crestSpin` 26 s bzw. 34 s pro Umdrehung). Ist bereits 1:1 so umgesetzt; im Browser per `getAnimations()` verifiziert (siehe `dev-integration.md`).
 
 **Tests (Red):** `LandingScreen.test.tsx` erwartet: kein „Est. 2026“-Text, keine Fusszeile, Karte „Roulette“, kein „europäische…“ → 3 Fälle rot.
+
+**Umsetzung (Green):** Span `est` und Fusszeile `bottom` inkl. CSS entfernt, Karte und Einleitung auf „Roulette“ umbenannt.
+Die Startseite wirkt dadurch ruhiger (Wappen → Titel → Text → Button → Karten). → 44/44 Tests grün.
