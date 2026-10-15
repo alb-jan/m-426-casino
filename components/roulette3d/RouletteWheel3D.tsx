@@ -91,7 +91,7 @@ export function RouletteWheel3D({ target, onSpinEnd, duration = 5200 }: Props) {
           </div>
         </div>
       )}
-      {status === "ready" && <div className={styles.hint}>Linke Maustaste ziehen zum Drehen</div>}
+      {status === "ready" && <div className={styles.hint}>Ziehen zum Drehen · Mausrad zum Zoomen</div>}
     </div>
   );
 }

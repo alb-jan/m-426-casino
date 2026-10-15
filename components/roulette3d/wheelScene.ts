@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { zoomDistance } from "./camera";
 import { applyMaterialOverrides } from "./materials";
 import { planSpin, pocketAngle, sampleSpin, BALL_POCKET, type SpinPlan } from "@/lib/roulette/wheelMath";
 
@@ -131,6 +132,11 @@ export async function createWheelScene(container: HTMLElement, modelUrl: string)
     el.style.cursor = "grab";
     if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
   };
+  const onWheel = (e: WheelEvent) => {
+    e.preventDefault();
+    cam.dist = zoomDistance(cam.dist, e.deltaY);
+  };
+  el.addEventListener("wheel", onWheel, { passive: false });
   el.addEventListener("pointerdown", onDown);
   el.addEventListener("pointermove", onMove);
   el.addEventListener("pointerup", onUp);
@@ -197,6 +203,7 @@ export async function createWheelScene(container: HTMLElement, modelUrl: string)
     dispose() {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      el.removeEventListener("wheel", onWheel);
       el.removeEventListener("pointerdown", onDown);
       el.removeEventListener("pointermove", onMove);
       el.removeEventListener("pointerup", onUp);
