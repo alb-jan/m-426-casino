@@ -131,3 +131,34 @@ Die alten Tests für `handStrength` entfallen, da die Funktion durch `estimateEq
 `lib/poker/testDeck.ts` (`rigDeck`) wurde unverändert aus `feature/poker-table` übernommen.
 
 **Ergebnis Red-Phase:** 5 Testdateien rot (Module fehlen). ✔
+
+### Umsetzung (Green)
+
+- `random.ts`: Mulberry32 + FNV-1a-Hash. Die Equity-Simulation wird aus Karten + Gegnerzahl geseedet → gleiche Situation,
+  gleiche Einschätzung (reproduzierbar, testbar); Zufall nur noch für Bluff-Entscheidungen.
+- `equity.ts`: Teil-Mischen (nur benötigte Karten ziehen), beste Hand per `evalBest`, Split anteilig. 250 Durchläufe ≈ 15 ms pro Entscheidung.
+- `bot.ts`: `botDecision` = Equity berechnen → reine Regel `chooseAction` (Wert-Einsatz, Pot-Odds, Re-Raise, Bluffs, Gegner-Bonus).
+- `opponentModel.ts`: zählt die Aktionen des Spielers; Aggressivität = Anteil Einsätze ≥ ½ Pot (ab 4 Aktionen).
+
+### Messung vorher / nachher (je 1000 Hände, Spieler mit 1000 Jetons gegen 3 Bots)
+
+| Spielweise | vorher: gewonnen / Ø pro Hand | nachher: gewonnen / Ø pro Hand |
+|---|---|---|
+| immer mitgehen | 30 % / −52 | 37 % / −96 |
+| immer minimal erhöhen | 32 % / −92 | 37 % / −156 |
+| **immer Pot-gross setzen** | **89 % / +62** | **38 % / −131** |
+| **immer All-In** | – | **34 % / −83** |
+| **vernünftig** (gleiche Logik wie die Bots) | – | **26 % / +3.8** (fairer Anteil bei 4 Spielern: 25 %) |
+
+Bots passen jetzt in ~20 % statt 42 % ihrer Züge gegen grosse Einsätze und erhöhen selbst (bis 17 %).
+Fazit: Stumpfe Strategien lassen sich nicht mehr ausnutzen; wer vernünftig spielt, spielt etwa ausgeglichen.
+
+### Probleme & Lösungen
+
+| Problem | Lösung |
+|---|---|
+| Monte-Carlo mit dem injizierten Test-Zufall `() => 0.5` würde immer dieselben Karten ziehen → Equity 0 oder 1. | Equity bekommt einen eigenen, aus der Situation geseedeten Generator; der injizierte Zufall steuert nur Bluffs. |
+| Die Simulation als Test wäre mit 250 Durchläufen pro Entscheidung zu langsam. | `samples` als Option; der Abnahme-Test nutzt 120 Durchläufe (Laufzeit wenige Sekunden). |
+| Vitest unterdrückt `console.log` erfolgreicher Tests – Messwerte waren unsichtbar. | Messungen in eine temporäre Datei geschrieben (nicht im Repo). |
+
+**Ergebnis Green-Phase:** 110/110 Tests grün, Typecheck und Lint fehlerfrei.
