@@ -66,3 +66,11 @@ Die Tests rendern die ganze `CasinoApp` (Integrationstest), damit auch der Bilds
 
 **Umsetzung (Green):** Span `est` und Fusszeile `bottom` inkl. CSS entfernt, Karte und Einleitung auf „Roulette“ umbenannt.
 Die Startseite wirkt dadurch ruhiger (Wappen → Titel → Text → Button → Karten). → 44/44 Tests grün.
+
+## Bugfix (Iteration 3): Animationen liefen nicht
+
+**Befund:** Im Browser lief keine Animation aus `components/screens/landing/LandingScreen.module.css` (`rise shimmer crestSpin`). CSS Modules benennen Animationsnamen lokal um,
+die `@keyframes` lagen aber nur global in `globals.css` (Details: `feature-project-setup.md`, Abschnitt 5).
+
+**Test (Red):** `components/screens/landing/animations.test.ts` prüft mit `missingKeyframesIn`, dass jede verwendete Animation im selben Modul
+definiert ist → rot.
