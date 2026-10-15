@@ -100,3 +100,18 @@ Fächer, Zahlen, Kugel) kommen korrekt aus Blender und bleiben unverändert. →
 
 **Alternative (verworfen):** Holz-Textur in Blender backen und als Bild ins GLB exportieren – mehr Dateigrösse und ohne
 Blender-Zugriff im Build nicht reproduzierbar. Die Farbkorrektur ist dokumentiert und leicht rückgängig zu machen.
+
+## 6. Änderungswunsch (Iteration 3): Zoomen mit dem Mausrad
+
+**Wunsch Product Owner:** Im 3D-Modell soll man mit dem Mausrad hinein- und herauszoomen können.
+
+**Planung:** Reine Funktion `zoomDistance(dist, deltaY)` in `components/roulette3d/camera.ts` (exponentiell, damit Zoom
+in beide Richtungen symmetrisch ist und Trackpads mit kleinen `deltaY` weich zoomen), begrenzt auf `ZOOM_MIN`/`ZOOM_MAX`.
+`wheelScene` hört auf `wheel` am Canvas (`passive: false` + `preventDefault`, damit die Seite dabei nicht scrollt).
+
+**Tests (Red):** `camera.test.ts` (Richtung, Symmetrie, Grenzen) und Hinweistext „Ziehen zum Drehen · Mausrad zum Zoomen“
+in `RouletteWheel3D.test.tsx` → rot.
+
+**Umsetzung (Green):** `camera.ts` mit `zoomDistance` (Faktor `e^(deltaY · 0.0012)`, Grenzen 0.6 – 2.6; Start 1.48).
+`wheelScene` registriert/entfernt den `wheel`-Listener; Kamerafahrten (Tisch ↔ Draufsicht) ändern nur den Neigungswinkel,
+der gewählte Zoom bleibt also erhalten. Hinweis auf der Bühne: „Ziehen zum Drehen · Mausrad zum Zoomen“. → 113/113 Tests grün.
