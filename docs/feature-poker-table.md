@@ -90,3 +90,11 @@ Der `started`-Ref entfällt. → 111/111 Tests grün.
 
 **Lernpunkt:** Effekte müssen idempotent sein (Setup + Cleanup ergeben wieder den Ausgangszustand). Ein „nur einmal ausführen“-Ref
 kaschiert das Problem nur. Tests für Animationen deshalb zusätzlich in `<StrictMode>` ausführen.
+
+## Bugfix (Iteration 3): Animationen liefen nicht
+
+**Befund:** Im Browser lief keine Animation aus `components/screens/poker/PokerScreen.module.css` (`panelIn`). CSS Modules benennen Animationsnamen lokal um,
+die `@keyframes` lagen aber nur global in `globals.css` (Details: `feature-project-setup.md`, Abschnitt 5).
+
+**Test (Red):** `components/screens/poker/animations.test.ts` prüft mit `missingKeyframesIn`, dass jede verwendete Animation im selben Modul
+definiert ist → rot.
