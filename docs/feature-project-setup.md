@@ -77,3 +77,6 @@ Test-Infrastruktur im selben Commit: `vitest.config.mts`, `vitest.setup.ts`, npm
 - `missingKeyframesIn(ordner)` – prüft alle `*.module.css` eines Ordners rekursiv; Ergebnis `{ datei: [namen] }`.
 
 **Test (Red):** `lib/testing/cssAnimations.test.ts` → rot (Modul fehlt).
+
+**Umsetzung (Green):** Regex-basierte Prüfung, rekursiver Ordner-Scan. → 10/10 Tests grün. Die betroffenen Feature-Branches
+übernehmen diesen Stand per `git merge feature/project-setup` und prüfen ihren eigenen Ordner.
