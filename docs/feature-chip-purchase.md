@@ -68,3 +68,8 @@ die Einheit steht doppelt (CHF vorne, „Franken“ hinten).
 
 **Test (Red):** `BuyScreen.test.tsx` – Platzhalter `0.00`, kein „Franken“-Suffix, `CHF` vorhanden. Das Feld wird in allen Tests
 jetzt über sein Label („Betrag in Franken“) gefunden statt über den Platzhalter (robuster, entspricht Screenreader-Nutzung).
+
+**Umsetzung (Green):**
+- Platzhalter `0.00` (Deckkraft 16 %), Suffix „Franken“ entfernt, `CHF` in gedämpftem Gold, Basislinie von Präfix und Betrag ausgerichtet.
+- Rahmen über CSS statt Inline-Style: Gold mit weichem Ring bei Fokus (`:focus-within`), rot bei Fehler (`[data-error]`).
+→ 55/55 Tests grün.
