@@ -126,3 +126,6 @@ definiert ist → rot.
 
 **Umsetzung (Green):** `@keyframes` (crestSpin) direkt in `components/roulette3d/RouletteWheel3D.module.css` definiert → werden gemeinsam mit dem Namen umbenannt
 und laufen im Browser. Alle Tests grün.
+
+**Abnahme im Browser:** Zoom funktioniert in beide Richtungen, die Seite scrollt dabei nicht. Ganz herausgezoomt
+(Abstand 2.6) wirkt der Kessel aber verloren klein. **Test (Red):** `ZOOM_MAX ≤ 2.1`.
