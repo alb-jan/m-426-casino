@@ -98,3 +98,6 @@ die `@keyframes` lagen aber nur global in `globals.css` (Details: `feature-proje
 
 **Test (Red):** `components/screens/poker/animations.test.ts` prüft mit `missingKeyframesIn`, dass jede verwendete Animation im selben Modul
 definiert ist → rot.
+
+**Umsetzung (Green):** `@keyframes` (panelIn) direkt in `components/screens/poker/PokerScreen.module.css` definiert → werden gemeinsam mit dem Namen umbenannt
+und laufen im Browser. Alle Tests grün.
