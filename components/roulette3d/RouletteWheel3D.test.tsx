@@ -31,6 +31,7 @@ describe("RouletteWheel3D", () => {
     expect(MODEL_URL).toBe("/models/roulette-wheel.glb");
     expect(createWheelScene).toHaveBeenCalledWith(screen.getByTestId("wheel-canvas"), MODEL_URL);
     expect(screen.queryByText("Kessel wird geladen …")).not.toBeInTheDocument();
+    expect(screen.getByText("Ziehen zum Drehen · Mausrad zum Zoomen")).toBeInTheDocument();
   });
 
   it("dreht auf die Zielzahl und meldet das Ende der Animation", async () => {
