@@ -115,3 +115,11 @@ in `RouletteWheel3D.test.tsx` → rot.
 **Umsetzung (Green):** `camera.ts` mit `zoomDistance` (Faktor `e^(deltaY · 0.0012)`, Grenzen 0.6 – 2.6; Start 1.48).
 `wheelScene` registriert/entfernt den `wheel`-Listener; Kamerafahrten (Tisch ↔ Draufsicht) ändern nur den Neigungswinkel,
 der gewählte Zoom bleibt also erhalten. Hinweis auf der Bühne: „Ziehen zum Drehen · Mausrad zum Zoomen“. → 113/113 Tests grün.
+
+## Bugfix (Iteration 3): Animationen liefen nicht
+
+**Befund:** Im Browser lief keine Animation aus `components/roulette3d/RouletteWheel3D.module.css` (`crestSpin`). CSS Modules benennen Animationsnamen lokal um,
+die `@keyframes` lagen aber nur global in `globals.css` (Details: `feature-project-setup.md`, Abschnitt 5).
+
+**Test (Red):** `components/roulette3d/animations.test.ts` prüft mit `missingKeyframesIn`, dass jede verwendete Animation im selben Modul
+definiert ist → rot.
