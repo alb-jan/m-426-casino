@@ -64,3 +64,5 @@ damit sie trotz Einsatz-Marker eindeutig auffindbar sind (gleichzeitig besser f�
 
 **Test (Red):** Die Seitenüberschrift soll nur noch „Roulette“ lauten (statt „Roulette · Europäischer Kessel“) → rot.
 Texte wie „Kessel dreht“ bleiben, da sie das Gerät beschreiben und nicht den Spielnamen.
+
+**Umsetzung (Green):** Überschrift in `RouletteScreen` auf „Roulette“ gekürzt. → alle Tests grün.
