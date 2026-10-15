@@ -94,3 +94,45 @@ Die visuelle Kontrolle des 3D-Kessels bestätigte ausserdem: Die Kugel liegt nac
 | US-13 | Als Spieler möchte ich auf Kolonnen (2 : 1) setzen können (im Design in der Legende erwähnt, aber ohne Felder). | 3 |
 | US-14 | Als Spieler möchte ich, dass mein Guthaben ein Neuladen der Seite übersteht (z. B. `localStorage`). | 3 |
 | US-15 | Favicon für die App (derzeit 404 auf `/favicon.ico`). | 4 |
+
+## 6. Iteration 3 – Änderungswünsche des Product Owners
+
+| Wunsch | Ergebnis | Branch |
+|---|---|---|
+| Name wie im Design | Geprüft: Design heisst „Casino Goldenes Ass“ (Titel, Header, Vorschaubild) – war bereits korrekt, keine Änderung | – |
+| Logo auf der Startseite animiert wie im Design | Animation war im Code vorhanden, lief aber nicht (siehe Bugfix unten) → behoben | landing-page |
+| Footer auf allen Seiten entfernen | Footer-Komponente gelöscht, Fusszeile der Startseite entfernt | chips-wallet, landing-page |
+| „Est. 2026 · Schulprojekt“ entfernen | entfernt | landing-page |
+| „Europäischer Kessel“ → „Roulette“ | Startseite (Karte + Text), Lobby, Roulette-Titel | landing-page, lobby, roulette-table |
+| Zoomen mit dem Mausrad im 3D-Kessel | `zoomDistance` + `wheel`-Listener, Grenzen 0.6 – 2.1, Seite scrollt nicht mit | roulette-3d-wheel |
+| Betragsfeld „schöner und cleaner“ | Platzhalter `0.00` dezent, Einheit nur einmal (`CHF`), Gold-Fokusrahmen | chip-purchase |
+
+Alle Wünsche wurden testgetrieben auf dem jeweiligen Feature-Branch umgesetzt (Test → Umsetzung → Doku) und danach in `dev` gemerged.
+Keine Merge-Konflikte.
+
+### Bugfix: CSS-Animationen liefen nicht
+
+Bei der Prüfung der Logo-Animation zeigte `document.getAnimations()` im Browser nur die Inline-Animationen (schwebende Jetons).
+**Ursache:** CSS Modules benennen Animationsnamen lokal um (`crestSpin` → `LandingScreen-module__…__crestSpin`), die
+`@keyframes` lagen aber global in `globals.css`. Betroffen waren auch Toasts, Poker-Ergebnis-Overlay, Roulette-Spinner,
+Gewinnzahl-Glow und der 3D-Ladering.
+
+**Vorgehen:** Prüfhilfe `missingKeyframesIn` in `feature/project-setup` (mit eigenen Tests), dann in jedem betroffenen Branch
+(`notifications`, `landing-page`, `poker-table`, `roulette-table`, `roulette-3d-wheel`) Basis nachgezogen, roter Test für den
+eigenen Ordner, `@keyframes` lokal im Modul definiert → grün. **Nachweis im Browser:** Logo-Ringe drehen (26 s / 34 s),
+`rise`-Einblendungen und `shimmer` laufen.
+
+### Integrationstest Iteration 3
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npm test` | 38 Testdateien, 235 Tests grün |
+| `tsc --noEmit`, `npm run lint` | fehlerfrei |
+| `next build` | erfolgreich |
+| Browser (Headless Chrome) | kein Footer auf allen Seiten, Animationen laufen, Zoom rein/raus funktioniert ohne Seiten-Scroll |
+
+### Retrospektive Iteration 3
+- 👎 Unit-Tests in jsdom konnten nicht erkennen, dass CSS-Animationen nie liefen – erst die Abnahme im echten Browser.
+- 👍 Der Fehler wurde in eine **automatisch prüfbare Regel** übersetzt, damit er nicht wiederkommt.
+- 👎 Lokale Testumgebung: Unter deutschem Windows lautet der Port-Status `ABHÖREN` und `grep` hielt die Ausgabe wegen des
+  Umlauts für binär → ein alter Server lief unbemerkt weiter und lieferte veraltete Seiten. Lösung: `grep -a`.
