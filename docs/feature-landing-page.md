@@ -49,3 +49,20 @@ Die Tests rendern die ganze `CasinoApp` (Integrationstest), damit auch der Bilds
 |---|---|
 | TypeScript kennt die CSS-Variable `--r` im `style`-Objekt nicht. | Style-Objekt als `CSSProperties` casten. |
 | Der Hauptbereich soll ohne Header die volle Höhe füllen. | `.main` mit `min-height: 100vh` und `flex: 1`. |
+
+## 5. Änderungswünsche (Iteration 3)
+
+**Wünsche Product Owner:**
+- Text „Est. 2026 · Schulprojekt“ über dem Titel entfernen.
+- Fusszeile der Startseite („Spielgeld in CHF · Ab 18 · …“) entfernen – wie der Footer auf allen anderen Seiten.
+- Überall „Europäischer Kessel“ durch „Roulette“ ersetzen (Feature-Karte und Einleitungstext).
+
+**Geprüft, keine Änderung nötig:**
+- Name: Im Design (Titel, Header, Vorschaubild) heisst das Casino „Casino Goldenes Ass“ – so ist es bereits umgesetzt.
+- Logo-Animation: Im Design blendet das Wappen mit `rise` ein, und zwei goldene Ringe drehen sich gegenläufig
+  (`crestSpin` 26 s bzw. 34 s pro Umdrehung). Ist bereits 1:1 so umgesetzt; im Browser per `getAnimations()` verifiziert (siehe `dev-integration.md`).
+
+**Tests (Red):** `LandingScreen.test.tsx` erwartet: kein „Est. 2026“-Text, keine Fusszeile, Karte „Roulette“, kein „europäische…“ → 3 Fälle rot.
+
+**Umsetzung (Green):** Span `est` und Fusszeile `bottom` inkl. CSS entfernt, Karte und Einleitung auf „Roulette“ umbenannt.
+Die Startseite wirkt dadurch ruhiger (Wappen → Titel → Text → Button → Karten). → 44/44 Tests grün.

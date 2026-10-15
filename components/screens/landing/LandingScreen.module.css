@@ -36,7 +36,6 @@
 .crestSpade { font-size: 26px; line-height: .8; margin-top: -4px; color: #E8B94A; }
 
 .titleBlock { display: flex; flex-direction: column; gap: 14px; animation: rise .7s .1s ease both; }
-.est { font-size: 11px; letter-spacing: .5em; text-transform: uppercase; color: #8FA096; }
 .title {
   margin: 0; font-family: var(--serif); font-size: clamp(48px,7vw,96px); line-height: .95; font-weight: 700; letter-spacing: .02em;
   background: linear-gradient(170deg,#FFF6DC 10%,#E8B94A 55%,#9E7A2C 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -68,8 +67,3 @@
 .featureTitle { font-size: 15px; font-weight: 700; color: #F2EFE6; }
 .featureText { font-size: 13px; line-height: 1.5; color: #8FA096; }
 
-.bottom {
-  position: relative; padding: 16px 32px; border-top: 1px solid rgba(232,239,230,.07);
-  display: flex; justify-content: center; gap: 26px; flex-wrap: wrap;
-  font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: #5F6E65;
-}
