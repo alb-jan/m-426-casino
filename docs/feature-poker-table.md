@@ -101,3 +101,26 @@ definiert ist → rot.
 
 **Umsetzung (Green):** `@keyframes` (panelIn) direkt in `components/screens/poker/PokerScreen.module.css` definiert → werden gemeinsam mit dem Namen umbenannt
 und laufen im Browser. Alle Tests grün.
+
+## 6. Iteration 4: Stärkere Bots am Tisch
+
+**Ziel:** Die neue Bot-KI aus `feature/poker-engine` (Equity, Pot-Odds, Bluffs, Gegnermodell) am Tisch nutzen.
+Engine-Stand per `git merge feature/poker-engine` übernommen – ohne Konflikte, alle bisherigen UI-Tests bleiben grün.
+
+**Planung:** `usePokerGame` führt ein **Spielerprofil** (`opponentModel`) über alle Hände der Sitzung:
+jede eigene Aktion wird mit dem tatsächlich gezahlten Betrag und dem Pot vor der Aktion beobachtet (`observe`);
+die Bots erhalten das Profil bei jeder Entscheidung (`botDecision(state, rng, { profile })`).
+Das Profil gilt pro Tisch-Besuch (neu beim Betreten des Tisches).
+
+**Test (Red):** `components/screens/poker/BotProfile.test.tsx` – `botDecision` wird per `vi.mock` beobachtet:
+Nach einem All-In des Spielers muss der nächste Bot ein Profil mit 1 Aktion und 1 grossem Einsatz erhalten.
+
+**Ergebnis Red-Phase:** rot – `botDecision` erhält noch kein Profil (`undefined`). ✔
+
+**Umsetzung (Green):** `usePokerGame` hält das Profil in einem Ref (kein Re-Render nötig). Bei jeder eigenen Aktion wird der
+tatsächlich gezahlte Betrag (Differenz von `committed`) gegen den Pot *vor* der Aktion beobachtet; der Bot-Effekt übergibt das
+Profil an `botDecision`. Eine Bot-Entscheidung dauert dank 250 Simulationen nur ~15 ms und fällt neben der 950-ms-Bedenkzeit nicht auf.
+→ 138/138 Tests grün, Typecheck und Lint fehlerfrei.
+
+**Problem & Lösung:** Ein Spy auf `botDecision` funktioniert nur, wenn der Hook die Funktion über den Modul-Export aufruft – bei
+Vitest-ESM klappt `vi.spyOn(modul, "botDecision")` direkt, ein zusätzliches `vi.mock` war nicht nötig.

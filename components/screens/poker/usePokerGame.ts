@@ -5,6 +5,7 @@ import { useCasino } from "@/components/casino/CasinoProvider";
 import { useNotify } from "@/components/notifications/NotificationProvider";
 import { calculateChips } from "@/lib/chips";
 import { botDecision } from "@/lib/poker/bot";
+import { newProfile, observe } from "@/lib/poker/opponentModel";
 import { newDeck, type Card, type Rng } from "@/lib/poker/cards";
 import {
   advanceRunout,
@@ -60,6 +61,8 @@ export function usePokerGame({
   const [flights, setFlights] = useState<FlyingChip[]>([]);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const ids = useRef({ id: 0, z: 10 });
+  // Gedächtnis der Bots über den Spieler (pro Tisch-Besuch)
+  const profile = useRef(newProfile());
 
   const later = useCallback((fn: () => void, ms: number) => {
     timers.current.push(setTimeout(fn, ms));
@@ -134,7 +137,7 @@ export function usePokerGame({
   useEffect(() => {
     if (game.phase === "bet" && !game.players[game.toAct].human) {
       const t = setTimeout(() => {
-        const d = botDecision(game, rng);
+        const d = botDecision(game, rng, { profile: profile.current });
         commit(game, applyAction(game, d.action, d.target));
       }, botDelay);
       return () => clearTimeout(t);
@@ -155,7 +158,9 @@ export function usePokerGame({
 
   const act = (action: PokerAction, target?: number) => {
     if (!myTurn) return;
-    commit(game, applyAction(game, action, target));
+    const next = applyAction(game, action, target);
+    profile.current = observe(profile.current, action, next.players[0].committed - game.players[0].committed, game.pot);
+    commit(game, next);
   };
 
   return {
