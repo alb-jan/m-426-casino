@@ -101,3 +101,18 @@ definiert ist → rot.
 
 **Umsetzung (Green):** `@keyframes` (panelIn) direkt in `components/screens/poker/PokerScreen.module.css` definiert → werden gemeinsam mit dem Namen umbenannt
 und laufen im Browser. Alle Tests grün.
+
+## 6. Iteration 4: Stärkere Bots am Tisch
+
+**Ziel:** Die neue Bot-KI aus `feature/poker-engine` (Equity, Pot-Odds, Bluffs, Gegnermodell) am Tisch nutzen.
+Engine-Stand per `git merge feature/poker-engine` übernommen – ohne Konflikte, alle bisherigen UI-Tests bleiben grün.
+
+**Planung:** `usePokerGame` führt ein **Spielerprofil** (`opponentModel`) über alle Hände der Sitzung:
+jede eigene Aktion wird mit dem tatsächlich gezahlten Betrag und dem Pot vor der Aktion beobachtet (`observe`);
+die Bots erhalten das Profil bei jeder Entscheidung (`botDecision(state, rng, { profile })`).
+Das Profil gilt pro Tisch-Besuch (neu beim Betreten des Tisches).
+
+**Test (Red):** `components/screens/poker/BotProfile.test.tsx` – `botDecision` wird per `vi.mock` beobachtet:
+Nach einem All-In des Spielers muss der nächste Bot ein Profil mit 1 Aktion und 1 grossem Einsatz erhalten.
+
+**Ergebnis Red-Phase:** rot – `botDecision` erhält noch kein Profil (`undefined`). ✔
