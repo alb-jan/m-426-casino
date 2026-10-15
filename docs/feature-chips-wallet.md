@@ -70,3 +70,9 @@ Wir bilden das als Zustand (`screen`) in einem React-Context ab, statt eigene Ne
 | Bash-Heredoc mit vielen Sonderzeichen (`’`, Backticks) brach beim Anlegen der Dateien ab. | Dateien direkt mit dem Editor geschrieben statt per Shell-Skript. |
 | `useCasino()` ausserhalb des Providers würde still `null` liefern. | Hook wirft eine sprechende Fehlermeldung – Fehler fallen im Test sofort auf. |
 | Header-Jeton hat im Design einen anderen Schatten und Innenabstand als die Tisch-Jetons. | `Chip` erhält optionale Props `inset`, `fontSize`, `style`. |
+
+## 5. Änderungswunsch (Iteration 3): Footer entfernen
+
+**Wunsch Product Owner:** Der Footer soll auf allen Seiten verschwinden.
+
+**Test (Red):** `CasinoApp.test.tsx` prüft für alle Bildschirme, dass kein `contentinfo` (Footer) gerendert wird → 3 Fälle rot.
