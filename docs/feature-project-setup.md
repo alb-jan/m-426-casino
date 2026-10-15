@@ -62,3 +62,18 @@ Test-Infrastruktur im selben Commit: `vitest.config.mts`, `vitest.setup.ts`, npm
 | `formatNumber(1000)` lieferte `1'000` statt `1’000` (3 Tests rot) | Die ICU-Daten von Node formatieren `de-CH` mit ASCII-Apostroph, Chrome mit typografischem `’`. Server- und Client-Rendering würden sich unterscheiden (Hydration-Mismatch). | Tausendertrennzeichen selbst setzen (Regex `\B(?=(\d{3})+(?!\d))`), unabhängig von der Laufzeitumgebung. |
 | `next/font/google` lässt sich in Vitest nicht ausführen | Die Funktion wird zur Build-Zeit vom Next-Compiler ersetzt. | Globaler Mock in `vitest.setup.ts`, der `className`/`variable` zurückgibt. |
 | CRLF-Warnungen beim Commit | Windows mit `core.autocrlf=true` | unkritisch, Git normalisiert die Zeilenenden. |
+
+## 5. Qualitätsregel (Iteration 3): Animationen in CSS-Modulen
+
+**Befund:** Bei der Abnahme der Logo-Animation lief im Browser keine einzige Animation aus einem `.module.css`
+(`document.getAnimations()` zeigte nur die Inline-Animationen). Ursache: CSS Modules benennen auch Animationsnamen lokal um
+(`crestSpin` → `LandingScreen-module__…__crestSpin`), die `@keyframes` lagen aber global in `globals.css` → kein Treffer.
+
+**Regel:** Jedes CSS-Modul definiert die `@keyframes`, die es verwendet, selbst (dann werden Name und Keyframes gleich umbenannt).
+
+**Prüfhilfe (TDD):** `lib/testing/cssAnimations.ts`
+- `missingKeyframes(css)` – liefert alle in `animation` / `animation-name` verwendeten Namen ohne `@keyframes` in derselben Datei
+  (Schlüsselwörter, Zeiten und `var()` werden ignoriert).
+- `missingKeyframesIn(ordner)` – prüft alle `*.module.css` eines Ordners rekursiv; Ergebnis `{ datei: [namen] }`.
+
+**Test (Red):** `lib/testing/cssAnimations.test.ts` → rot (Modul fehlt).
