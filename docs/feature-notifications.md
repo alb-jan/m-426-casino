@@ -56,3 +56,11 @@ melden nur Ereignisse über einen Event-Bus („Spiel-Events lösen die Benachri
 | Der Handler-Typ ist pro Ereignis unterschiedlich; eine `Map<Key, Set<Handler<E[K]>>>` lässt sich in TypeScript nicht direkt ausdrücken. | Intern `Handler<never>` speichern und an den öffentlichen, generischen Methoden typisieren – die API bleibt vollständig typsicher. |
 | Timer-Test: Toast muss genau nach 4600 ms verschwinden. | `vi.useFakeTimers()` und `advanceTimersByTime(4599)` / `(2)` prüfen beide Seiten der Grenze. |
 | React-Warnung „ref value will likely have changed“ beim Cleanup | Timer-Array vor dem Cleanup in eine lokale Variable kopieren. |
+
+## Bugfix (Iteration 3): Animationen liefen nicht
+
+**Befund:** Im Browser lief keine Animation aus `components/notifications/ToastStack.module.css` (`toastIn`). CSS Modules benennen Animationsnamen lokal um,
+die `@keyframes` lagen aber nur global in `globals.css` (Details: `feature-project-setup.md`, Abschnitt 5).
+
+**Test (Red):** `components/notifications/animations.test.ts` prüft mit `missingKeyframesIn`, dass jede verwendete Animation im selben Modul
+definiert ist → rot.
