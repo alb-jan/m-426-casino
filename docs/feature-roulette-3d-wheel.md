@@ -112,7 +112,7 @@ in beide Richtungen symmetrisch ist und Trackpads mit kleinen `deltaY` weich zoo
 **Tests (Red):** `camera.test.ts` (Richtung, Symmetrie, Grenzen) und Hinweistext „Ziehen zum Drehen · Mausrad zum Zoomen“
 in `RouletteWheel3D.test.tsx` → rot.
 
-**Umsetzung (Green):** `camera.ts` mit `zoomDistance` (Faktor `e^(deltaY · 0.0012)`, Grenzen 0.6 – 2.6; Start 1.48).
+**Umsetzung (Green):** `camera.ts` mit `zoomDistance` (Faktor `e^(deltaY · 0.0012)`, Grenzen 0.6 – 2.6 (siehe unten: 2.1); Start 1.48).
 `wheelScene` registriert/entfernt den `wheel`-Listener; Kamerafahrten (Tisch ↔ Draufsicht) ändern nur den Neigungswinkel,
 der gewählte Zoom bleibt also erhalten. Hinweis auf der Bühne: „Ziehen zum Drehen · Mausrad zum Zoomen“. → 113/113 Tests grün.
 
@@ -126,3 +126,8 @@ definiert ist → rot.
 
 **Umsetzung (Green):** `@keyframes` (crestSpin) direkt in `components/roulette3d/RouletteWheel3D.module.css` definiert → werden gemeinsam mit dem Namen umbenannt
 und laufen im Browser. Alle Tests grün.
+
+**Abnahme im Browser:** Zoom funktioniert in beide Richtungen, die Seite scrollt dabei nicht. Ganz herausgezoomt
+(Abstand 2.6) wirkt der Kessel aber verloren klein. **Test (Red):** `ZOOM_MAX ≤ 2.1`.
+
+**Umsetzung (Green):** `ZOOM_MAX = 2.1`. → alle Tests grün.

@@ -14,6 +14,7 @@ describe("zoomDistance", () => {
 
   it("bleibt innerhalb der Grenzen", () => {
     expect(ZOOM_MIN).toBeLessThan(ZOOM_MAX);
+    expect(ZOOM_MAX).toBeLessThanOrEqual(2.1); // Kessel bleibt gross genug
     expect(zoomDistance(ZOOM_MIN, -5000)).toBe(ZOOM_MIN);
     expect(zoomDistance(ZOOM_MAX, 5000)).toBe(ZOOM_MAX);
   });
