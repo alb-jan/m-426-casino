@@ -64,3 +64,6 @@ die `@keyframes` lagen aber nur global in `globals.css` (Details: `feature-proje
 
 **Test (Red):** `components/notifications/animations.test.ts` prüft mit `missingKeyframesIn`, dass jede verwendete Animation im selben Modul
 definiert ist → rot.
+
+**Umsetzung (Green):** `@keyframes` (toastIn) direkt in `components/notifications/ToastStack.module.css` definiert → werden gemeinsam mit dem Namen umbenannt
+und laufen im Browser. Alle Tests grün.

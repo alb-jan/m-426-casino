@@ -16,3 +16,5 @@
 .body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .title { font-size: 14px; font-weight: 700; }
 .msg { font-size: 13px; color: #B7C2BA; line-height: 1.4; }
+
+@keyframes toastIn { from { opacity: 0; transform: translateX(24px) } to { opacity: 1; transform: none } }
