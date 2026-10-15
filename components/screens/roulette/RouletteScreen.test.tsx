@@ -28,7 +28,7 @@ describe("RouletteScreen", () => {
 
   it("zeigt Titel, Tableau und Hinweis", () => {
     renderTable();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Roulette · Europäischer Kessel");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/^Roulette$/);
     expect(screen.getByText("Setze Jetons auf das Tableau und drehe den Kessel.")).toBeInTheDocument();
     for (let n = 0; n <= 36; n++) expect(screen.getByRole("button", { name: `Zahl ${n}` })).toBeInTheDocument();
     for (const l of ["1 – 18", "Gerade", "Rot", "Schwarz", "Ungerade", "19 – 36", "1. Dutzend (1–12)"]) {
