@@ -116,3 +116,18 @@ Ursachen: Die Handstärke war eine grobe Formel (ein Paar ≈ 0.35), Mitgehen er
 - AA gegen 1 Gegner ≈ 85 % Equity, gegen 3 Gegner ≈ 64 %; 7-2 offsuit deutlich schwächer.
 - Gegen ein All-In geht der Bot mit starken Händen mit und passt mit Müll.
 - **Ausbeuten nicht mehr möglich:** „immer All-In“ und „immer Pot-gross setzen“ verlieren auf Dauer Jetons (Simulation als Test).
+
+### Tests (Red)
+
+| Testdatei | Fälle |
+|---|---|
+| `lib/poker/random.test.ts` | reproduzierbar, Wertebereich, Gleichverteilung, `hashSeed` stabil |
+| `lib/poker/equity.test.ts` | bekannte Werte (AA vs 1/3 Gegner, 7-2o), unschlagbare Hand = 1, Split = 0.5, reproduzierbar |
+| `lib/poker/opponentModel.test.ts` | neutraler Start, Dauer-Aggressor erkannt, Mitgehen/kleine Erhöhungen zählen nicht, unveränderlich |
+| `lib/poker/bot.test.ts` | `valueBar`; `chooseAction`: Pot-Odds, Gegner-Bonus, Pot-Odds mit kurzem Stack, Wert-Einsatz in BB-Schritten, Re-Raise, Schieben, Bluff-Regeln; `botDecision`: All-In mit AA mitgehen / mit 7-2 passen, Drilling setzt, Profil, Reproduzierbarkeit |
+| `lib/poker/botStrength.test.ts` | **Abnahme-Simulation**: „immer All-In“, „immer Pot-gross“, „immer minimal erhöhen“ verlieren über 300 Hände |
+
+Die alten Tests für `handStrength` entfallen, da die Funktion durch `estimateEquity` ersetzt wird.
+`lib/poker/testDeck.ts` (`rigDeck`) wurde unverändert aus `feature/poker-table` übernommen.
+
+**Ergebnis Red-Phase:** 5 Testdateien rot (Module fehlen). ✔
