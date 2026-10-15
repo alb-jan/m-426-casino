@@ -123,3 +123,6 @@ die `@keyframes` lagen aber nur global in `globals.css` (Details: `feature-proje
 
 **Test (Red):** `components/roulette3d/animations.test.ts` prüft mit `missingKeyframesIn`, dass jede verwendete Animation im selben Modul
 definiert ist → rot.
+
+**Umsetzung (Green):** `@keyframes` (crestSpin) direkt in `components/roulette3d/RouletteWheel3D.module.css` definiert → werden gemeinsam mit dem Namen umbenannt
+und laufen im Browser. Alle Tests grün.
