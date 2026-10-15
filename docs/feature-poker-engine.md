@@ -83,3 +83,36 @@ so lassen sich Showdown-Situationen exakt nachstellen. Der Zufall der Bots wird 
 | Kurzes All-In-Raise hätte die Mindesterhöhung verkleinert. | `minRaise = max(BB, Erhöhung, bisheriges minRaise)`. |
 | Tests für Showdowns brauchen bekannte Karten. | Deck-Injektion in `newHand` + Test-Helfer `rig()`; `newDeck(rng)` für reproduzierbares Mischen. |
 | Bash-Heredoc mit `python` im Test-Fix brach ab (Python-Heredoc nicht terminiert). | Datei trotzdem korrekt ersetzt; künftig Dateien nur noch mit dem Editor ändern. |
+
+## 5. Iteration 4: Stärkere Bots (Research-basiert)
+
+### Ausgangslage
+Beim Testen gewann der Product Owner fast jede Hand. Eine Simulation (3000 Hände je Spielweise) bestätigte das:
+Wer **immer Pot-gross setzt**, gewinnt 89 % der Hände (98 % davon ohne Showdown, Bots passen in 42 % ihrer Züge).
+Ursachen: Die Handstärke war eine grobe Formel (ein Paar ≈ 0.35), Mitgehen erst bei *Handstärke > Pot-Odds + 0.1*, kaum Erhöhungen, keine Bluffs.
+
+### Research (Zusammenfassung)
+- Echte Online-Pokerräume verbieten Bots; Hausbots im Casino-Bereich dürfen keine Zusatzinformationen haben.
+- Spitzen-KIs (Libratus, Pluribus) nutzen *Counterfactual Regret Minimization* – für ein Schulprojekt zu aufwendig.
+- Praxisübliche regelbasierte Bots: **Gewinnwahrscheinlichkeit per Monte-Carlo-Simulation**, Entscheidung über **Pot-Odds**,
+  **dosierte Bluffs**, **Gegnermodell** (Aggressivität des Gegners beobachten).
+
+### Umzusetzende Funktionen
+
+| Datei → Funktion | Inhalt | Aufbau |
+|---|---|---|
+| `lib/poker/random.ts` → `seededRng(seed)`, `hashSeed(text)` | reproduzierbarer Zufall | Mulberry32 |
+| `lib/poker/equity.ts` → `estimateEquity(hole, board, gegner, rng, samples)` | Gewinnwahrscheinlichkeit 0…1 | zufällige Gegnerhände + Restboard ziehen, `evalBest` vergleichen, Split anteilig |
+| `lib/poker/opponentModel.ts` → `newProfile`, `observe`, `aggression` | Gedächtnis über den Spieler | zählt Aktionen und grosse Einsätze (≥ ½ Pot) |
+| `lib/poker/bot.ts` → `botDecision(state, rng, opts)` | neue Entscheidungslogik | siehe unten |
+
+**Entscheidungslogik**
+- Equity per Simulation gegen alle noch aktiven Gegner (deterministisch geseedet aus Karten + Situation).
+- *Wertgrenze* = `1.6 / (Gegner + 1) + 0.05` (max. 0.75): darüber setzt/erhöht der Bot (½ bzw. ¾ Pot).
+- Gegen einen Einsatz: **mitgehen, wenn Equity + Gegner-Bonus ≥ Pot-Odds**; Gegner-Bonus = 0.08 × Aggressivität des Spielers.
+- **Bluffs**: ab dem Flop mit ≤ 2 Gegnern in 10 % der Fälle, wenn niemand gesetzt hat; seltene Bluff-Erhöhung (4 %).
+
+### Akzeptanzkriterien
+- AA gegen 1 Gegner ≈ 85 % Equity, gegen 3 Gegner ≈ 64 %; 7-2 offsuit deutlich schwächer.
+- Gegen ein All-In geht der Bot mit starken Händen mit und passt mit Müll.
+- **Ausbeuten nicht mehr möglich:** „immer All-In“ und „immer Pot-gross setzen“ verlieren auf Dauer Jetons (Simulation als Test).
