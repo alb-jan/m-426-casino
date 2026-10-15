@@ -53,3 +53,5 @@ Roulette oder verlässt das Casino über die Kasse.
 
 **Test (Red):** Die Roulette-Karte soll „Roulette mit einer Null. Mehrere Einsätze pro Runde möglich.“ zeigen,
 „Europäischer Kessel“ darf nicht mehr vorkommen → rot.
+
+**Umsetzung (Green):** Text in `LobbyScreen` angepasst. → alle Tests grün.
