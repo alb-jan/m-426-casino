@@ -76,3 +76,5 @@ Wir bilden das als Zustand (`screen`) in einem React-Context ab, statt eigene Ne
 **Wunsch Product Owner:** Der Footer soll auf allen Seiten verschwinden.
 
 **Test (Red):** `CasinoApp.test.tsx` prüft für alle Bildschirme, dass kein `contentinfo` (Footer) gerendert wird → 3 Fälle rot.
+
+**Umsetzung (Green):** `components/layout/Footer.tsx` gelöscht, Einbindung in `CasinoApp` entfernt. → 43/43 Tests grün.
