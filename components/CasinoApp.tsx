@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import { CasinoProvider, useCasino } from "@/components/casino/CasinoProvider";
-import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 import { BuyScreen } from "@/components/screens/buy/BuyScreen";
@@ -45,7 +44,6 @@ function Shell() {
     >
       {showChrome && <Header />}
       {renderScreen(state.screen)}
-      {showChrome && <Footer />}
     </div>
   );
 }
