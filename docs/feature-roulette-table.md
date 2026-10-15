@@ -74,3 +74,6 @@ die `@keyframes` lagen aber nur global in `globals.css` (Details: `feature-proje
 
 **Test (Red):** `components/screens/roulette/animations.test.ts` prüft mit `missingKeyframesIn`, dass jede verwendete Animation im selben Modul
 definiert ist → rot.
+
+**Umsetzung (Green):** `@keyframes` (settleGlow crestSpin) direkt in `components/screens/roulette/RouletteScreen.module.css` definiert → werden gemeinsam mit dem Namen umbenannt
+und laufen im Browser. Alle Tests grün.
