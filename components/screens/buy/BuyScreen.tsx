@@ -50,7 +50,7 @@ export function BuyScreen() {
           </label>
           <div
             className={styles.inputWrap}
-            style={{ borderColor: error ? "rgba(226,87,76,.6)" : "rgba(232,185,74,.28)" }}
+            data-error={error ? "true" : undefined}
           >
             <span className={styles.currency}>CHF</span>
             <input
@@ -61,11 +61,10 @@ export function BuyScreen() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") buy();
               }}
-              placeholder="z. B. 25.00"
+              placeholder="0.00"
               inputMode="decimal"
               autoComplete="off"
             />
-            <span className={styles.unit}>Franken</span>
           </div>
 
           <div className={styles.quick}>
