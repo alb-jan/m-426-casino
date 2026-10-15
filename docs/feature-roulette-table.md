@@ -66,3 +66,14 @@ damit sie trotz Einsatz-Marker eindeutig auffindbar sind (gleichzeitig besser f�
 Texte wie „Kessel dreht“ bleiben, da sie das Gerät beschreiben und nicht den Spielnamen.
 
 **Umsetzung (Green):** Überschrift in `RouletteScreen` auf „Roulette“ gekürzt. → alle Tests grün.
+
+## Bugfix (Iteration 3): Animationen liefen nicht
+
+**Befund:** Im Browser lief keine Animation aus `components/screens/roulette/RouletteScreen.module.css` (`settleGlow crestSpin`). CSS Modules benennen Animationsnamen lokal um,
+die `@keyframes` lagen aber nur global in `globals.css` (Details: `feature-project-setup.md`, Abschnitt 5).
+
+**Test (Red):** `components/screens/roulette/animations.test.ts` prüft mit `missingKeyframesIn`, dass jede verwendete Animation im selben Modul
+definiert ist → rot.
+
+**Umsetzung (Green):** `@keyframes` (settleGlow crestSpin) direkt in `components/screens/roulette/RouletteScreen.module.css` definiert → werden gemeinsam mit dem Namen umbenannt
+und laufen im Browser. Alle Tests grün.
