@@ -60,7 +60,7 @@ Die Tests rendern die ganze `CasinoApp` (Integrationstest), damit auch der Bilds
 **Geprüft, keine Änderung nötig:**
 - Name: Im Design (Titel, Header, Vorschaubild) heisst das Casino „Casino Goldenes Ass“ – so ist es bereits umgesetzt.
 - Logo-Animation: Im Design blendet das Wappen mit `rise` ein, und zwei goldene Ringe drehen sich gegenläufig
-  (`crestSpin` 26 s bzw. 34 s pro Umdrehung). Ist bereits 1:1 so umgesetzt; im Browser per `getAnimations()` verifiziert (siehe `dev-integration.md`).
+  (`crestSpin` 26 s bzw. 34 s pro Umdrehung). Im Code war das 1:1 vorhanden, **lief im Browser aber nicht** – siehe Abschnitt „Bugfix (Iteration 3)“ unten.
 
 **Tests (Red):** `LandingScreen.test.tsx` erwartet: kein „Est. 2026“-Text, keine Fusszeile, Karte „Roulette“, kein „europäische…“ → 3 Fälle rot.
 
