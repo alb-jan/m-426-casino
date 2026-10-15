@@ -136,3 +136,30 @@ eigenen Ordner, `@keyframes` lokal im Modul definiert → grün. **Nachweis im B
 - 👍 Der Fehler wurde in eine **automatisch prüfbare Regel** übersetzt, damit er nicht wiederkommt.
 - 👎 Lokale Testumgebung: Unter deutschem Windows lautet der Port-Status `ABHÖREN` und `grep` hielt die Ausgabe wegen des
   Umlauts für binär → ein alter Server lief unbemerkt weiter und lieferte veraltete Seiten. Lösung: `grep -a`.
+
+## 7. Iteration 4 – Stärkere Poker-Bots
+
+**Auslöser:** Der Product Owner gewann beim Poker fast immer. Analyse per Simulation: Mit grossen Einsätzen gewann man 89 % der Hände,
+weil die Bots ihre Hände unterschätzten und zu oft passten. Danach Research zu Poker in Online-Casinos und zu Poker-KIs
+(Zusammenfassung in `feature-poker-engine.md`, Abschnitt 5).
+
+| Branch | Änderung |
+|---|---|
+| `feature/poker-engine` | Monte-Carlo-Equity, Pot-Odds-Regel, Wert-Einsätze/Re-Raises, dosierte Bluffs, Gegnermodell, Abnahme-Simulation als Test |
+| `feature/poker-table` | Spielerprofil wird über die Hände geführt und an die Bots übergeben |
+
+Merge in `dev` ohne Konflikte. **Integrationstest:** 43 Testdateien, 258 Tests grün; Typecheck, Lint, Build fehlerfrei.
+
+**Browser-Test (Headless Chrome, 8 Hände nur All-In):** keine Fehler; die Bots gehen jetzt mit guten Händen gegen All-Ins mit
+(Showdowns statt kampfloser Siege). Der Testlauf endete zufällig im Plus – daher zusätzlich eine Sitzungs-Simulation mit
+mitgenommenen Stacks (40 Sitzungen à 30 Hände):
+
+| Spielweise | pleite | Ø pro Sitzung |
+|---|---|---|
+| immer All-In | 38 / 40 | −93 |
+| immer Pot-gross | 40 / 40 | −1000 |
+| vernünftig | 15 / 40 | −70 |
+
+**Offener Punkt (Entscheid Product Owner):** Bots, die pleite gehen, werden wie im Design-Prototyp gratis auf 600 Jetons aufgefüllt.
+Dadurch kann eine seltene Glückssträhne lawinenartig wachsen (in den 2 von 40 gewonnenen All-In-Sitzungen). Mögliche Alternative:
+Bots ohne Jetons verlassen den Tisch und werden erst später ersetzt.
