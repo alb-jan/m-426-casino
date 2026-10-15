@@ -1,8 +1,5 @@
+import { CasinoApp } from "@/components/CasinoApp";
+
 export default function Home() {
-  return (
-    <main>
-      <h1>Next.js</h1>
-      <p>Bearbeite app/page.tsx, um loszulegen.</p>
-    </main>
-  );
+  return <CasinoApp />;
 }
