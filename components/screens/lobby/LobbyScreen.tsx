@@ -64,7 +64,7 @@ export function LobbyScreen() {
               <RouletteArt />
               <div>
                 <h2 className={styles.gameTitle}>Roulette</h2>
-                <p className={styles.gameText}>Europäischer Kessel mit einer Null. Mehrere Einsätze pro Runde möglich.</p>
+                <p className={styles.gameText}>Roulette mit einer Null. Mehrere Einsätze pro Runde möglich.</p>
               </div>
               <div className={styles.gameFoot}>
                 <span className={styles.gameMeta}>Einzelplatz · sofort spielbar</span>

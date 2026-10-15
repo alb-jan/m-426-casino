@@ -48,3 +48,10 @@ Roulette oder verlässt das Casino über die Kasse.
 |---|---|
 | Das Design verwendet `style-hover` auf einem Kind-Element des Buttons. | CSS-Selektor `.gameBtn:hover .gameCard` statt Inline-Style. |
 | Der Titel „Poker“/„Roulette“ ist ein `h2` innerhalb eines Buttons – der Test sucht den Button per Name. | Button per Teiltext `Platz nehmen →` / `Setzen →` finden (Regex), Überschrift separat per Rolle `heading`. |
+
+## 5. Änderungswunsch (Iteration 3): „Europäischer Kessel“ → „Roulette“
+
+**Test (Red):** Die Roulette-Karte soll „Roulette mit einer Null. Mehrere Einsätze pro Runde möglich.“ zeigen,
+„Europäischer Kessel“ darf nicht mehr vorkommen → rot.
+
+**Umsetzung (Green):** Text in `LobbyScreen` angepasst. → alle Tests grün.

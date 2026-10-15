@@ -20,6 +20,8 @@ describe("LobbyScreen", () => {
     expect(screen.getByRole("heading", { name: "Poker" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Roulette" })).toBeInTheDocument();
     expect(screen.getByText("Texas Hold'em gegen drei Computergegner. Blinds 10 / 20 Jetons.")).toBeInTheDocument();
+    expect(screen.getByText("Roulette mit einer Null. Mehrere Einsätze pro Runde möglich.")).toBeInTheDocument();
+    expect(screen.queryByText(/Europäischer Kessel/)).not.toBeInTheDocument();
   });
 
   it("öffnet den Pokertisch", () => {
