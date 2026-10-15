@@ -18,7 +18,7 @@ export function RouletteScreen(options: RouletteOptions) {
     <main className={styles.main}>
       <div className={styles.wrap}>
         <div className={styles.titleRow}>
-          <h1 className={styles.title}>Roulette · Europäischer Kessel</h1>
+          <h1 className={styles.title}>Roulette</h1>
           <div className={styles.pills}>
             <div className={styles.pill}>
               <span className={styles.pillLabel}>Gesamteinsatz</span>{" "}

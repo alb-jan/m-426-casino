@@ -59,3 +59,10 @@ damit sie trotz Einsatz-Marker eindeutig auffindbar sind (gleichzeitig besser f�
 | `getByText("Schwarz")` war mehrdeutig, weil das Aussen-Feld „Schwarz“ denselben Text hat. | Farbname im Ergebnis über `data-testid="spin-color"` geprüft (Test präzisiert, Verhalten unverändert). |
 | Einsatz-Marker verändert den zugänglichen Namen eines Zahlenfelds („17 20“). | `aria-label` für alle Felder („Zahl 17“, „Rot“, „Jeton 50“). |
 | Jeton-Wahl braucht einen Zustand für Screenreader. | `aria-pressed` auf dem gewählten Jeton. |
+
+## 5. Änderungswunsch (Iteration 3): „Europäischer Kessel“ → „Roulette“
+
+**Test (Red):** Die Seitenüberschrift soll nur noch „Roulette“ lauten (statt „Roulette · Europäischer Kessel“) → rot.
+Texte wie „Kessel dreht“ bleiben, da sie das Gerät beschreiben und nicht den Spielnamen.
+
+**Umsetzung (Green):** Überschrift in `RouletteScreen` auf „Roulette“ gekürzt. → alle Tests grün.
