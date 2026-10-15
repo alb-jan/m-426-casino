@@ -58,3 +58,13 @@ Fehler verständlich angezeigt, ein erfolgreicher Kauf wird per Toast bestätigt
 |---|---|
 | Gleitkomma: `4.35 * 10` ergibt `43.49999…` → `floor` würde 43 statt 43.5 → 43 liefern, bei Beträgen wie `0.29 * 10 = 2.8999…` aber einen Jeton zu wenig. | Vor dem Abrunden auf 3 Nachkommastellen runden: `floor(round(chf × RATE × 1000) / 1000)`. |
 | Fehlermeldung soll beim Tippen verschwinden, aber nicht bei jedem Rendern. | Gemeinsame `pick()`-Funktion für Eingabe und Schnellwahl setzt Betrag und leert den Fehler. |
+
+## 5. Änderungswunsch (Iteration 3): Eingabefeld schöner und cleaner
+
+**Befund Product Owner:** Das Feld „CHF  z. B. 25.00  Franken“ wirkt unruhig: grosser grauer Platzhaltertext in Monospace und
+die Einheit steht doppelt (CHF vorne, „Franken“ hinten).
+
+**Ziel:** Platzhalter nur `0.00` in sehr dezenter Farbe, Einheit nur einmal (`CHF`), Fokus-Rahmen in Gold.
+
+**Test (Red):** `BuyScreen.test.tsx` – Platzhalter `0.00`, kein „Franken“-Suffix, `CHF` vorhanden. Das Feld wird in allen Tests
+jetzt über sein Label („Betrag in Franken“) gefunden statt über den Platzhalter (robuster, entspricht Screenreader-Nutzung).

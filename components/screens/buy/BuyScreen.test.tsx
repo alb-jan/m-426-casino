@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { CasinoApp } from "@/components/CasinoApp";
 
 const start = () => render(<CasinoApp initial={{ screen: "buy", chips: 0, bought: 0, cashed: 0 }} />);
-const input = () => screen.getByPlaceholderText("z. B. 25.00") as HTMLInputElement;
+const input = () => screen.getByLabelText("Betrag in Franken") as HTMLInputElement;
 const buyBtn = () => screen.getByRole("button", { name: "Jetons kaufen und starten" });
 
 describe("BuyScreen", () => {
@@ -13,6 +13,13 @@ describe("BuyScreen", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Jetons kaufen");
     expect(screen.getByText("CHF 1.00 = 10 Jetons")).toBeInTheDocument();
     expect(screen.getByText("Mindestbetrag CHF 5 · Höchstbetrag CHF 500 · nur Spielgeld")).toBeInTheDocument();
+  });
+
+  it("zeigt ein schlichtes Eingabefeld ohne doppelte Einheit", () => {
+    start();
+    expect(input()).toHaveAttribute("placeholder", "0.00");
+    expect(screen.queryByText("Franken")).not.toBeInTheDocument();
+    expect(screen.getByText("CHF")).toBeInTheDocument();
   });
 
   it("aktualisiert die Vorschau bei der Eingabe", () => {
