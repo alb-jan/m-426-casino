@@ -116,3 +116,11 @@ Das Profil gilt pro Tisch-Besuch (neu beim Betreten des Tisches).
 Nach einem All-In des Spielers muss der nächste Bot ein Profil mit 1 Aktion und 1 grossem Einsatz erhalten.
 
 **Ergebnis Red-Phase:** rot – `botDecision` erhält noch kein Profil (`undefined`). ✔
+
+**Umsetzung (Green):** `usePokerGame` hält das Profil in einem Ref (kein Re-Render nötig). Bei jeder eigenen Aktion wird der
+tatsächlich gezahlte Betrag (Differenz von `committed`) gegen den Pot *vor* der Aktion beobachtet; der Bot-Effekt übergibt das
+Profil an `botDecision`. Eine Bot-Entscheidung dauert dank 250 Simulationen nur ~15 ms und fällt neben der 950-ms-Bedenkzeit nicht auf.
+→ 138/138 Tests grün, Typecheck und Lint fehlerfrei.
+
+**Problem & Lösung:** Ein Spy auf `botDecision` funktioniert nur, wenn der Hook die Funktion über den Modul-Export aufruft – bei
+Vitest-ESM klappt `vi.spyOn(modul, "botDecision")` direkt, ein zusätzliches `vi.mock` war nicht nötig.
