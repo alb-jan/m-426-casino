@@ -1,6 +1,6 @@
 /** Kameraabstand-Grenzen (Modelleinheiten, Kessel-Radius ≈ 0.41). */
 export const ZOOM_MIN = 0.6;
-export const ZOOM_MAX = 2.6;
+export const ZOOM_MAX = 2.1;
 
 /** Neuer Kameraabstand nach einem Mausrad-Event. */
 export function zoomDistance(dist: number, deltaY: number): number {
