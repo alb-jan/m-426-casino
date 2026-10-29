@@ -14,7 +14,7 @@ describe("NotificationProvider", () => {
 
   it("zeigt einen Toast über useNotify an", () => {
     render(
-      <NotificationProvider>
+      <NotificationProvider bus={gameEvents}>
         <Trigger />
       </NotificationProvider>,
     );
@@ -25,13 +25,13 @@ describe("NotificationProvider", () => {
   });
 
   it("reagiert auf Spiel-Events aus dem Event-Bus", () => {
-    render(<NotificationProvider>{null}</NotificationProvider>);
+    render(<NotificationProvider bus={gameEvents}>{null}</NotificationProvider>);
     act(() => gameEvents.emit("notify", { kind: "warn", title: "Zu wenig Jetons", msg: "Kaufe nach." }));
     expect(screen.getByText("Zu wenig Jetons")).toBeInTheDocument();
   });
 
   it("entfernt den Toast nach 4.6 Sekunden", () => {
-    render(<NotificationProvider>{null}</NotificationProvider>);
+    render(<NotificationProvider bus={gameEvents}>{null}</NotificationProvider>);
     act(() => gameEvents.emit("notify", { kind: "info", title: "Hallo", msg: "Welt" }));
     expect(TOAST_DURATION).toBe(4600);
     act(() => vi.advanceTimersByTime(4599));
@@ -41,7 +41,7 @@ describe("NotificationProvider", () => {
   });
 
   it("meldet sich beim Unmount vom Event-Bus ab", () => {
-    const { unmount } = render(<NotificationProvider>{null}</NotificationProvider>);
+    const { unmount } = render(<NotificationProvider bus={gameEvents}>{null}</NotificationProvider>);
     unmount();
     expect(() => gameEvents.emit("notify", { kind: "info", title: "x", msg: "y" })).not.toThrow();
   });
