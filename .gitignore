@@ -37,3 +37,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Lokale Pruefwerkzeuge, Berichte und Abgabepakete
+/.review-tools/
+/artifacts/
+/.idea/
+
+# Local review and release artifacts
+/.review-tools/
+/artifacts/
+/.idea/
