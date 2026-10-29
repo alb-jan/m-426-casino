@@ -7,7 +7,7 @@ const wheel=vi.hoisted(()=>({finish:()=>{}}));
 vi.mock("@/components/roulette3d/RouletteWheel3D",()=>({RouletteWheel3D:({onSpinEnd}:{onSpinEnd:()=>void})=>{wheel.finish=onSpinEnd;return <div/>;}}));
 const games:GameDefinition[]=[{id:"roulette",title:"Roulette",minimum:10,entryReason:"kleinster Jeton",description:"Test",meta:"Test",cta:"Setzen →",Art:()=>null,Screen:()=> <RouletteScreen rng={()=>17.5/37}/>}];
 const start=()=>render(<CasinoApp initial={{screen:"roulette",chips:250,bought:25,cashed:0}} games={games}/>);
-const click=(name:string|RegExp)=>act(()=>screen.getByRole("button",{name,exact:typeof name==="string"}).click());
+const click=(name:string|RegExp)=>act(()=>screen.getByRole("button",{name}).click());
 describe("US-11 Wallet und Navigation",()=>{
  beforeEach(()=>vi.useFakeTimers()); afterEach(()=>vi.useRealTimers());
  it("erstattet vor einer Drehung beim Zurückgehen alle Einsätze",()=>{
