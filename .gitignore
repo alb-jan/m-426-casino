@@ -43,7 +43,3 @@ next-env.d.ts
 /artifacts/
 /.idea/
 
-# Local review and release artifacts
-/.review-tools/
-/artifacts/
-/.idea/

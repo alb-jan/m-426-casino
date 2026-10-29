@@ -105,7 +105,7 @@ export function BettingBoard({ bets, denom, onPick, onPlace, onClear, disabled =
           Einzelzahl <strong>35 : 1</strong>
         </span>
         <span>
-          Dutzend / Kolonne <strong>2 : 1</strong>
+          Dutzend <strong>2 : 1</strong>
         </span>
         <span>
           Rot / Schwarz · Gerade / Ungerade · 1–18 / 19–36 <strong>1 : 1</strong>
