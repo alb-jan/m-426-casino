@@ -1,5 +1,6 @@
-import { numberBg } from "@/lib/roulette/view";
 "use client";
+
+import { numberBg } from "@/lib/roulette/view";
 
 import { useCasino } from "@/components/casino/CasinoProvider";
 import { RouletteWheel3D } from "@/components/roulette3d/RouletteWheel3D";
