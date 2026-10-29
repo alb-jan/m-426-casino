@@ -1,6 +1,7 @@
+import { numberBg } from "@/lib/roulette/view";
 import { CHIP_STYLES, DENOMS } from "@/lib/chips";
 import { formatNumber } from "@/lib/format";
-import { GRID, numberBg, type BetKey, type Bets, type OutsideKey } from "@/lib/roulette/rules";
+import { GRID, type BetKey, type Bets, type OutsideKey } from "@/lib/roulette/rules";
 import styles from "./RouletteScreen.module.css";
 
 interface Props {

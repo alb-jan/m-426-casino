@@ -1,9 +1,11 @@
 "use client";
 
+import { numberBg } from "@/lib/roulette/view";
+
 import { useCasino } from "@/components/casino/CasinoProvider";
 import { RouletteWheel3D } from "@/components/roulette3d/RouletteWheel3D";
 import { formatNumber } from "@/lib/format";
-import { numberBg } from "@/lib/roulette/rules";
+
 import { BettingBoard } from "./BettingBoard";
 import { ResultPanel } from "./ResultPanel";
 import styles from "./RouletteScreen.module.css";
