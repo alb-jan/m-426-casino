@@ -27,10 +27,6 @@ export interface SpinResult {
 
 export const numberColor = (n: number): NumberColor => (n === 0 ? "green" : RED.has(n) ? "red" : "black");
 
-export const colorName = (n: number) => ({ green: "Grün · Zéro", red: "Rot", black: "Schwarz" })[numberColor(n)];
-
-export const numberBg = (n: number) => ({ green: "#16724E", red: "#B23A2E", black: "#1A1A1A" })[numberColor(n)];
-
 export function placeBet(bets: Bets, key: BetKey, amount: number): Bets {
   return { ...bets, [key]: (bets[key] ?? 0) + amount };
 }

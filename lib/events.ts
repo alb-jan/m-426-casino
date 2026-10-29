@@ -41,5 +41,5 @@ export type GameEvents = {
   notify: NotifyPayload;
 };
 
-/** Globale Instanz – Spiele melden hier, die Toast-Komponente hört zu. */
+/** Legacy-Instanz für bestehende Bus-Vertragstests; Provider besitzen ihren eigenen oder injizierten Bus. */
 export const gameEvents = createEventBus<GameEvents>();

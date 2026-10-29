@@ -1,6 +1,6 @@
 import { formatNumber } from "@/lib/format";
 import type { ToastKind } from "@/lib/events";
-import { RED, type SpinResult } from "./rules";
+import { RED, numberColor, type SpinResult } from "./rules";
 
 export function spinMessage(r: SpinResult): { kind: ToastKind; title: string; msg: string } {
   const col = r.num === 0 ? "Grün" : RED.has(r.num) ? "Rot" : "Schwarz";
@@ -13,3 +13,7 @@ export function spinMessage(r: SpinResult): { kind: ToastKind; title: string; ms
   }
   return { kind: "lose", title: "Verloren", msg: `${head}Einsatz von ${formatNumber(r.total)} Jetons verfällt.` };
 }
+
+export const colorName = (n: number) => ({ green: "Grün · Zéro", red: "Rot", black: "Schwarz" })[numberColor(n)];
+
+export const numberBg = (n: number) => ({ green: "#16724E", red: "#B23A2E", black: "#1A1A1A" })[numberColor(n)];
