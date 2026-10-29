@@ -11,11 +11,11 @@ describe("Konstanten", () => {
 
 describe("walletReducer", () => {
   it("startet auf der Landingpage ohne Guthaben", () => {
-    expect(initialWallet).toEqual({ screen: "landing", chips: 0, bought: 0, cashed: 0 });
+    expect(initialWallet).toEqual({ route: { kind: "landing" }, chips: 0, bought: 0, cashed: 0 });
   });
 
   it("navigiert zwischen Bildschirmen", () => {
-    expect(walletReducer(initialWallet, { type: "navigate", screen: "lobby" }).screen).toBe("lobby");
+    expect(walletReducer(initialWallet, { type: "navigate", route: { kind: "lobby" } }).route).toEqual({kind:"lobby"});
   });
 
   it("verbucht Einzahlungen", () => {
@@ -33,14 +33,14 @@ describe("walletReducer", () => {
   });
 
   it("zahlt aus und wechselt zur Kasse", () => {
-    const s = walletReducer({ ...initialWallet, screen: "lobby", chips: 455, bought: 50 }, { type: "cashOut" });
-    expect(s.screen).toBe("exit");
+    const s = walletReducer({ ...initialWallet, route: { kind: "lobby" }, chips: 455, bought: 50 }, { type: "cashOut" });
+    expect(s.route).toEqual({kind:"exit"});
     expect(s.cashed).toBe(45.5);
   });
 
   it("startet eine neue Sitzung auf dem Kaufbildschirm", () => {
-    const s = walletReducer({ screen: "exit", chips: 40, bought: 50, cashed: 4 }, { type: "reset" });
-    expect(s).toEqual({ screen: "buy", chips: 0, bought: 0, cashed: 0 });
+    const s = walletReducer({ route: { kind: "exit" }, chips: 40, bought: 50, cashed: 4 }, { type: "reset" });
+    expect(s).toEqual({ route: { kind: "buy" }, chips: 0, bought: 0, cashed: 0 });
   });
 });
 

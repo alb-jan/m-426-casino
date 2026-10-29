@@ -1,14 +1,15 @@
 "use client";
 
-import { useCasino } from "@/components/casino/CasinoProvider";
+import { useNavigation, useWalletState } from "@/components/casino/CasinoProvider";
 import { Chip } from "@/components/chips/Chip";
 import { formatNumber } from "@/lib/format";
 import styles from "./Header.module.css";
 import { Logo } from "./Logo";
 
 export function Header() {
-  const { state, navigate } = useCasino();
-  const inGame = state.screen === "poker" || state.screen === "roulette";
+  const state = useWalletState();
+  const { navigate, canLeave } = useNavigation();
+  const inGame = state.route.kind === "game";
 
   return (
     <header className={styles.header}>
@@ -28,7 +29,7 @@ export function Header() {
           <span className={styles.balanceUnit}>Jetons</span>
         </div>
         {inGame && (
-          <button className={styles.back} onClick={() => navigate("lobby")}>
+          <button className={styles.back} disabled={!canLeave} title={!canLeave ? "Runde läuft – Rückkehr nach der Auswertung" : undefined} onClick={() => navigate({ kind: "lobby" })}>
             ← Zurück zur Spielauswahl
           </button>
         )}

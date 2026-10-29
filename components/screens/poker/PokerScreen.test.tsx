@@ -12,7 +12,7 @@ const rng = () => 0.5;
 
 function ScreenProbe() {
   const { state } = useCasino();
-  return <span data-testid="screen">{state.screen}</span>;
+  return <span data-testid="screen">{state.route.kind === "game" ? state.route.gameId : state.route.kind}</span>;
 }
 
 function renderTable(chips = 1000) {
