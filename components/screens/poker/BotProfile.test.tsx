@@ -1,3 +1,4 @@
+import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 import { act, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CasinoProvider } from "@/components/casino/CasinoProvider";
@@ -17,9 +18,9 @@ describe("Gegnermodell am Tisch", () => {
   it("gibt den Bots das beobachtete Spielerprofil mit", () => {
     const spy = vi.spyOn(bot, "botDecision");
     render(
-      <CasinoProvider initial={{ screen: "poker", chips: 1000, bought: 100, cashed: 0 }}>
+      <NotificationProvider><CasinoProvider initial={{ screen: "poker", chips: 1000, bought: 100, cashed: 0 }}>
         <PokerScreen deckFactory={deckFactory} rng={() => 0.5} />
-      </CasinoProvider>,
+      </CasinoProvider></NotificationProvider>,
     );
     act(() => vi.advanceTimersByTime(1000)); // Milla handelt
     expect(spy).toHaveBeenCalled();

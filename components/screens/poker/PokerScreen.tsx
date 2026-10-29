@@ -5,7 +5,7 @@ import { useCasino } from "@/components/casino/CasinoProvider";
 import { calculateChips } from "@/lib/chips";
 import { formatNumber } from "@/lib/format";
 import { BB } from "@/lib/poker/engine";
-import { streetLabel } from "@/lib/poker/view";
+import { presentOutcome, streetLabel } from "@/lib/poker/view";
 import { ActionBar } from "./ActionBar";
 import { ChipFlight } from "./ChipFlight";
 import { PlayingCard } from "./PlayingCard";
@@ -18,6 +18,7 @@ export function PokerScreen(options: PokerGameOptions) {
   const g = usePokerGame(options);
   const { state: wallet } = useCasino();
   const { game } = g;
+  const result = presentOutcome(game);
 
   return (
     <main className={styles.main}>
@@ -82,9 +83,9 @@ export function PokerScreen(options: PokerGameOptions) {
             <MySeat game={game} />
           </div>
 
-          {game.phase === "done" && game.result && (
+          {game.phase === "done" && result && (
             <ResultOverlay
-              result={game.result}
+              result={result}
               nextLabel={game.players[0].stack < BB ? "Keine Jetons mehr – zur Spielauswahl" : "Nächste Runde"}
               onNext={g.nextHand}
               onLobby={g.toLobby}

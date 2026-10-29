@@ -1,3 +1,4 @@
+import { presentOutcome } from "./view";
 import { describe, expect, it } from "vitest";
 import { cards, newDeck, type Card } from "./cards";
 import {
@@ -54,8 +55,8 @@ describe("newHand", () => {
     expect(s.players[0].human).toBe(true);
     expect(s.players.every((p) => p.hole.length === 2)).toBe(true);
     expect(s.deck).toHaveLength(52 - 8);
-    expect(s.players[1]).toMatchObject({ bet: SB, stack: 590, last: "Small Blind" });
-    expect(s.players[2]).toMatchObject({ bet: BB, stack: 580, last: "Big Blind" });
+    expect(s.players[1]).toMatchObject({ bet: SB, stack: 590, last: {kind:"small-blind"} });
+    expect(s.players[2]).toMatchObject({ bet: BB, stack: 580, last: {kind:"big-blind"} });
     expect(s.pot).toBe(30);
     expect(s.currentBet).toBe(BB);
     expect(s.toAct).toBe(3);
@@ -87,7 +88,7 @@ describe("applyAction – Setzrunde", () => {
   it("wechselt nach allen Calls auf den Flop", () => {
     let s = newHand([1000, 600, 600, 600], 0, RANDOM_DECK());
     s = applyAction(s, "call"); // Milla 20
-    expect(s.players[3].last).toBe("Geht mit 20");
+    expect(s.players[3].last).toEqual({kind:"call",amount:20});
     s = applyAction(s, "call"); // Du 20
     s = applyAction(s, "call"); // Vera +10
     expect(s.street).toBe(0);
@@ -103,9 +104,9 @@ describe("applyAction – Setzrunde", () => {
   it("deckt Turn und River einzeln auf", () => {
     let s = newHand([1000, 600, 600, 600], 0, RANDOM_DECK());
     for (let i = 0; i < 4; i++) s = applyAction(s, "call");
-    expect(s.players[1].last).toBe("");
+    expect(s.players[1].last).toBeNull();
     s = applyAction(s, "call");
-    expect(s.players[1].last).toBe("Schiebt");
+    expect(s.players[1].last).toEqual({kind:"check"});
     for (let i = 0; i < 3; i++) s = applyAction(s, "call");
     expect(s.street).toBe(2);
     expect(s.community).toHaveLength(4);
@@ -117,7 +118,7 @@ describe("applyAction – Setzrunde", () => {
   it("überspringt Spieler, die gepasst haben", () => {
     let s = newHand([1000, 600, 600, 600], 0, RANDOM_DECK());
     s = applyAction(s, "fold"); // Milla
-    expect(s.players[3]).toMatchObject({ folded: true, last: "Passt" });
+    expect(s.players[3]).toMatchObject({ folded: true, last: {kind:"fold"} });
     expect(s.toAct).toBe(0);
   });
 
@@ -126,7 +127,7 @@ describe("applyAction – Setzrunde", () => {
     expect(minRaiseTarget(s)).toBe(40);
     s = applyAction(s, "raise", 25);
     expect(s.currentBet).toBe(40);
-    expect(s.players[3].last).toBe("Erhöht auf 40");
+    expect(s.players[3].last).toEqual({kind:"raise",amount:40});
     s = applyAction(s, "raise", 100); // Du erhöht um 60
     expect(s.minRaise).toBe(60);
     expect(minRaiseTarget(s)).toBe(160);
@@ -147,7 +148,7 @@ describe("applyAction – Setzrunde", () => {
     let s = newHand([30, 600, 600, 600], 0, RANDOM_DECK());
     s = applyAction(s, "raise", 100); // Milla auf 100
     s = applyAction(s, "raise", 30); // Du All-In 30 (weniger als 100)
-    expect(s.players[0]).toMatchObject({ allIn: true, bet: 30, stack: 0, last: "All-In 30" });
+    expect(s.players[0]).toMatchObject({ allIn: true, bet: 30, stack: 0, last: {kind:"all-in",amount:30} });
     expect(s.currentBet).toBe(100);
     expect(s.players[3].acted).toBe(true);
     expect(s.toAct).toBe(1);
@@ -171,9 +172,9 @@ describe("Handende", () => {
     s = applyAction(s, "fold"); // Ruben
     expect(s.phase).toBe("done");
     expect(s.players[0].stack).toBe(1030);
-    expect(s.result).toMatchObject({ title: "Gewonnen!", kind: "win", sub: "Alle anderen haben gepasst.", showdown: false });
-    expect(s.result!.rows[0]).toMatchObject({ name: "Du", hand: "gewinnt ohne Showdown", win: true, net: 30 });
-    expect(s.result!.rows[1]).toMatchObject({ hand: "gepasst", net: -10 });
+    expect(presentOutcome(s)).toMatchObject({ title: "Gewonnen!", kind: "win", sub: "Alle anderen haben gepasst." });
+    expect(presentOutcome(s)!.rows[0]).toMatchObject({ name: "Du", hand: "gewinnt ohne Showdown", win: true, net: 30 });
+    expect(presentOutcome(s)!.rows[1]).toMatchObject({ hand: "gepasst", net: -10 });
     expect(total(s)).toBe(2800);
   });
 
@@ -182,17 +183,17 @@ describe("Handende", () => {
     const s = checkDown(newHand([1000, 600, 600, 600], 0, deck));
     expect(s.phase).toBe("done");
     expect(s.players[0].stack).toBe(1060);
-    expect(s.players[0].handName).toBe("Drilling");
-    expect(s.result).toMatchObject({ title: "Gewonnen!", kind: "win", showdown: true });
-    expect(s.result!.sub).toBe("Showdown – die besten fünf Karten zählen.");
-    expect(s.result!.rows.map((r) => r.hand)).toEqual(["Drilling", "Paar", "Höchste Karte", "Höchste Karte"]);
+    expect(s.players[0].hand?.cat).toBe(3);
+    expect(presentOutcome(s)).toMatchObject({ title: "Gewonnen!", kind: "win" });
+    expect(presentOutcome(s)!.sub).toBe("Showdown – die besten fünf Karten zählen.");
+    expect(presentOutcome(s)!.rows.map((r) => r.hand)).toEqual(["Drilling", "Paar", "Höchste Karte", "Höchste Karte"]);
     expect(s.result!.winners).toEqual([0]);
   });
 
   it("meldet eine verlorene Hand", () => {
     const deck = rig(["7s 2d", "Kd Kc", "As Ah", "9c 4h"], "Ac 8d 3s Jh 5c");
     const s = checkDown(newHand([1000, 600, 600, 600], 0, deck));
-    expect(s.result).toMatchObject({ title: "Verloren", kind: "lose" });
+    expect(presentOutcome(s)).toMatchObject({ title: "Verloren", kind: "lose" });
     expect(s.players[2].stack).toBe(660);
   });
 
@@ -225,7 +226,7 @@ describe("Handende", () => {
     expect(s.players[0].stack).toBe(300); // Hauptpot 3 × 100
     expect(s.players[1].stack).toBe(600); // Nebenpot 2 × 100 an Vera (KK > QQ)
     expect(s.players[2].stack).toBe(400);
-    expect(s.result!.sub).toContain("2 Pots (All-In)");
+    expect(presentOutcome(s)!.sub).toContain("2 Pots (All-In)");
     expect(total(s)).toBe(1900);
   });
 

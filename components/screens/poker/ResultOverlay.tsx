@@ -1,11 +1,11 @@
 import { formatSigned } from "@/lib/format";
-import type { HandOutcome } from "@/lib/poker/engine";
+import type { HandOutcomeView } from "@/lib/poker/view";
 import styles from "./PokerScreen.module.css";
 
 const TITLE_COLORS = { win: "#7FD6A8", lose: "#F4B9B3", info: "#E8B94A" } as const;
 
 interface Props {
-  result: HandOutcome;
+  result: HandOutcomeView;
   nextLabel: string;
   onNext: () => void;
   onLobby: () => void;
