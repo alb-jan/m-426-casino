@@ -15,7 +15,7 @@ describe("US-09 Rundenvertrag und Ressourcen",()=>{
   setup();expect(screen.getByRole("button",{name:/Zurück zur Spielauswahl/})).toBeDisabled();
   act(()=>screen.getByText("direkt verlassen").click());expect(screen.getByTestId("route")).toHaveTextContent("game");
   run();act(()=>screen.getByRole("button",{name:"Passen"}).click());run();
-  expect(screen.getByRole("button",{name:"← Zurück zur Spielauswahl",exact:true})).toBeEnabled();
+  expect(screen.getByRole("button",{name:"← Zurück zur Spielauswahl"})).toBeEnabled();
  });
  it("räumt nach einer neuen Hand auch neu angelegte Animationstimer auf",()=>{
   const view=setup();run();act(()=>screen.getByRole("button",{name:"Passen"}).click());run();

@@ -1,187 +1,54 @@
 "use client";
-
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCasino } from "@/components/casino/CasinoProvider";
+import { useLeaveGuard, useNavigation, useWalletActions, useWalletState } from "@/components/casino/CasinoProvider";
 import { useNotify } from "@/components/notifications/NotificationProvider";
-import { calculateChips } from "@/lib/chips";
-import { botDecision } from "@/lib/poker/bot";
 import { newProfile, observe } from "@/lib/poker/opponentModel";
 import { newDeck, type Card, type Rng } from "@/lib/poker/cards";
-import {
-  advanceRunout,
-  applyAction,
-  BB,
-  BOT_STACK,
-  newHand,
-  nextHandStacks,
-  SEATS,
-  type PokerAction,
-  type PokerState,
-} from "@/lib/poker/engine";
-import { defaultRaise, outcomeMessage, raiseStep } from "@/lib/poker/view";
-
-export interface FlyingChip {
-  id: number;
-  val: number;
-  seat: number;
-  at: "seat" | "pot" | "win";
-  win?: number;
-  jx: number;
-  jy: number;
-  rot: number;
-  z: number;
-}
-
-export interface PokerGameOptions {
-  deckFactory?: () => Card[];
-  rng?: Rng;
-  botDelay?: number;
-  runoutDelay?: number;
-}
-
-/**
- * Steuert eine Poker-Partie: hält den (unveränderlichen) Spielzustand aus lib/poker,
- * plant Bot-Züge und Runout per Timer, synchronisiert das Wallet und meldet Ereignisse.
- */
-export function usePokerGame({
-  deckFactory = () => newDeck(),
-  rng = Math.random,
-  botDelay = 950,
-  runoutDelay = 900,
-}: PokerGameOptions = {}) {
-  const { state: wallet, setChips, navigate } = useCasino();
-  const notify = useNotify();
-
-  /** Startzustand der aktuellen Hand – Schlüssel für die Blind-Animation */
-  const [hand, setHand] = useState<PokerState>(() =>
-    newHand([wallet.chips, BOT_STACK, BOT_STACK, BOT_STACK], 0, deckFactory()),
-  );
-  const [game, setGame] = useState<PokerState>(hand);
-  const [raiseAmt, setRaiseAmt] = useState(() => defaultRaise(hand));
-  const [flights, setFlights] = useState<FlyingChip[]>([]);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const ids = useRef({ id: 0, z: 10 });
-  // Gedächtnis der Bots über den Spieler (pro Tisch-Besuch)
-  const profile = useRef(newProfile());
-
-  const later = useCallback((fn: () => void, ms: number) => {
-    timers.current.push(setTimeout(fn, ms));
-  }, []);
-
-  /* ---------- Jeton-Flug: spawnen am Sitz, landen chaotisch im Pot ---------- */
-  const fly = useCallback((seat: number, amount: number) => {
-    if (amount <= 0) return;
-    const items: FlyingChip[] = calculateChips(amount)
-      .slice(0, 10)
-      .map((val) => ({
-        id: ++ids.current.id,
-        val,
-        seat,
-        at: "seat",
-        jx: Math.round((Math.random() - 0.5) * 30),
-        jy: Math.round((Math.random() - 0.5) * 30),
-        rot: Math.round((Math.random() - 0.5) * 90),
-        z: ++ids.current.z,
-      }));
-    setFlights((f) => [...f, ...items]);
-    items.forEach((it, i) =>
-      later(() => setFlights((f) => f.map((c) => (c.id === it.id ? { ...c, at: "pot" } : c))), 30 + i * 65),
-    );
-  }, [later]);
-
-  /** Pot wird eingezogen: die Jetons fliegen zum Gewinner und blenden aus. */
-  const sweep = useCallback((seat: number) => {
-    setFlights((f) => f.map((c) => ({ ...c, at: "win", win: seat })));
-    later(() => setFlights([]), 900);
-  }, [later]);
-
-  /** Neuen Zustand übernehmen und Nebenwirkungen (Animation, Toast) auslösen. */
-  const commit = useCallback(
-    (prev: PokerState, next: PokerState) => {
-      setGame(next);
-      setRaiseAmt(defaultRaise(next));
-      next.players.forEach((p, i) => fly(i, p.committed - prev.players[i].committed));
-      if (next.phase === "done" && prev.phase !== "done" && next.result) {
-        notify(next.result.kind, next.result.title, outcomeMessage(next));
-        if (next.result.winners.length) later(() => sweep(next.result!.winners[0]), 700);
-      }
-    },
-    [fly, notify, sweep, later],
-  );
-
-  const startHand = useCallback(
-    (stacks: number[], dealer: number) => {
-      timers.current.forEach(clearTimeout);
-      timers.current = [];
-      const next = newHand(stacks, dealer, deckFactory());
-      setHand(next);
-      setGame(next);
-      setRaiseAmt(defaultRaise(next));
-    },
-    [deckFactory],
-  );
-
-  // Blinds jeder neuen Hand animieren. Der Cleanup räumt die Jetons wieder ab – so ist der
-  // Effekt idempotent und funktioniert auch mit dem doppelten Mount des React-StrictMode.
-  useEffect(() => {
-    hand.players.forEach((p, i) => fly(i, p.committed));
-    return () => setFlights([]);
-  }, [hand, fly]);
-
-  // Wallet-Guthaben = eigener Stack am Tisch
-  useEffect(() => {
-    setChips(game.players[0].stack);
-  }, [game, setChips]);
-
-  // Bots und Runout zeitverzögert ausführen
-  useEffect(() => {
-    if (game.phase === "bet" && !game.players[game.toAct].human) {
-      const t = setTimeout(() => {
-        const d = botDecision(game, rng, { profile: profile.current });
-        commit(game, applyAction(game, d.action, d.target));
-      }, botDelay);
-      return () => clearTimeout(t);
-    }
-    if (game.phase === "runout") {
-      const t = setTimeout(() => commit(game, advanceRunout(game)), runoutDelay);
-      return () => clearTimeout(t);
-    }
-  }, [game, rng, botDelay, runoutDelay, commit]);
-
-  // Aufräumen beim Verlassen des Tisches
-  useEffect(() => {
-    const pending = timers.current;
-    return () => pending.forEach(clearTimeout);
-  }, []);
-
-  const myTurn = game.phase === "bet" && game.toAct === 0;
-
-  const act = (action: PokerAction, target?: number) => {
-    if (!myTurn) return;
-    const next = applyAction(game, action, target);
-    profile.current = observe(profile.current, action, next.players[0].committed - game.players[0].committed, game.pot);
-    commit(game, next);
-  };
-
-  return {
-    game,
-    flights,
-    raiseAmt,
-    myTurn,
-    waiting: game.phase === "bet" && !myTurn,
-    fold: () => act("fold"),
-    call: () => act("call"),
-    raise: () => act("raise", raiseAmt),
-    allIn: () => act("raise", game.players[0].bet + game.players[0].stack),
-    raiseUp: () => setRaiseAmt((a) => raiseStep(game, a, 1)),
-    raiseDown: () => setRaiseAmt((a) => raiseStep(game, a, -1)),
-    nextHand: () => {
-      if (game.players[0].stack < BB) {
-        navigate({ kind: "lobby" });
-        return;
-      }
-      startHand(nextHandStacks(game), (game.dealer + 1) % SEATS);
-    },
-    toLobby: () => navigate({ kind: "lobby" }),
-  };
+import { applyAction, BB, BOT_STACK, newHand, nextHandStacks, SEATS, type PokerAction, type PokerState } from "@/lib/poker/engine";
+import { defaultRaise, outcomeMessage, presentOutcome, raiseStep } from "@/lib/poker/view";
+import { useChipFlights } from "./useChipFlights";
+import { usePokerTurnScheduler } from "./usePokerTurnScheduler";
+export type { FlyingChip } from "./useChipFlights";
+export interface PokerGameOptions { deckFactory?:()=>Card[];rng?:Rng;botDelay?:number;runoutDelay?:number }
+export function usePokerGame({deckFactory=()=>newDeck(),rng=Math.random,botDelay=950,runoutDelay=900}:PokerGameOptions={}) {
+ const wallet=useWalletState();
+ const {setChips}=useWalletActions();
+ const {navigate}=useNavigation();
+ const notify=useNotify();
+ const [hand,setHand]=useState(()=>newHand([wallet.chips,BOT_STACK,BOT_STACK,BOT_STACK],0,deckFactory()));
+ const [game,setGame]=useState(hand);
+ const [raiseAmt,setRaiseAmt]=useState(()=>defaultRaise(hand));
+ const profile=useRef(newProfile());
+ const {flights,fly,award}=useChipFlights(hand);
+ const commit=useCallback((prev:PokerState,next:PokerState)=>{
+   setGame(next);setRaiseAmt(defaultRaise(next));
+   next.players.forEach((player,i)=>fly(i,player.committed-prev.players[i].committed));
+   if(next.phase==="done"&&prev.phase!=="done"&&next.result) {
+     const view=presentOutcome(next)!;notify(view.kind,view.title,outcomeMessage(next));
+     if(next.result.winners.length)award(next.result.winners[0]);
+   }
+ },[fly,notify,award]);
+ useEffect(()=>{setChips(game.players[0].stack);},[game,setChips]);
+ usePokerTurnScheduler(game,commit,{rng,botDelay,runoutDelay,profile});
+ useLeaveGuard("poker",()=>game.phase==="done"?{allowed:true}:{allowed:false},game.phase!=="done");
+ const myTurn=game.phase==="bet"&&game.toAct===0;
+ const act=(action:PokerAction,target?:number)=>{
+   if(!myTurn)return;
+   const next=applyAction(game,action,target);
+   profile.current=observe(profile.current,action,next.players[0].committed-game.players[0].committed,game.pot);
+   commit(game,next);
+ };
+ return {
+   game,flights,raiseAmt,myTurn,waiting:game.phase==="bet"&&!myTurn,
+   fold:()=>act("fold"),call:()=>act("call"),raise:()=>act("raise",raiseAmt),
+   allIn:()=>act("raise",game.players[0].bet+game.players[0].stack),
+   raiseUp:()=>setRaiseAmt((old)=>raiseStep(game,old,1)),raiseDown:()=>setRaiseAmt((old)=>raiseStep(game,old,-1)),
+   nextHand:()=>{
+     if(game.phase!=="done")return;
+     if(game.players[0].stack<BB){navigate({kind:"lobby"});return;}
+     const next=newHand(nextHandStacks(game),(game.dealer+1)%SEATS,deckFactory());
+     setHand(next);setGame(next);setRaiseAmt(defaultRaise(next));
+   },
+   toLobby:()=>navigate({kind:"lobby"}),
+ };
 }

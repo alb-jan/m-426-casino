@@ -3,7 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLeaveGuard, useWalletActions, useWalletState } from "@/components/casino/CasinoProvider";
 import { useNotify } from "@/components/notifications/NotificationProvider";
 import { formatNumber } from "@/lib/format";
-import { spinMessage, totalBet, type BetKey } from "@/lib/roulette/rules";
+import { spinMessage } from "@/lib/roulette/view";
+import { totalBet, type BetKey } from "@/lib/roulette/rules";
 import { RouletteGame, type RouletteCommand, type RouletteEffect } from "@/lib/roulette/state";
 
 export interface RouletteOptions { rng?: () => number; spinDuration?: number | null }

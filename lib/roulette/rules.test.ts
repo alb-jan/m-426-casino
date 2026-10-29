@@ -1,3 +1,4 @@
+import { spinMessage } from "@/lib/roulette/view";
 import { describe, expect, it } from "vitest";
 import {
   colorName,
@@ -8,7 +9,6 @@ import {
   placeBet,
   RED,
   resolveSpin,
-  spinMessage,
   spinNumber,
   totalBet,
   WHEEL_ORDER,
