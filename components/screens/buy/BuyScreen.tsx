@@ -25,7 +25,7 @@ export function BuyScreen() {
     }
     deposit(res.chf, res.chips);
     setError("");
-    navigate("lobby");
+    navigate({ kind: "lobby" });
     notify("info", `${formatNumber(res.chips)} Jetons gekauft`, `Für CHF ${formatChf(res.chf)} – viel Erfolg am Tisch!`);
   };
 

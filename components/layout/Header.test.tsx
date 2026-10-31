@@ -7,8 +7,8 @@ function Probe() {
   const { state, navigate, setChips } = useCasino();
   return (
     <>
-      <span data-testid="screen">{state.screen}</span>
-      <button onClick={() => navigate("poker")}>poker</button>
+      <span data-testid="screen">{state.route.kind === "game" ? state.route.gameId : state.route.kind}</span>
+      <button onClick={() => navigate({kind:"game",gameId:"poker"})}>poker</button>
       <button onClick={() => setChips(1000)}>chips</button>
     </>
   );
@@ -16,7 +16,7 @@ function Probe() {
 
 function setup() {
   render(
-    <CasinoProvider initial={{ screen: "lobby", chips: 0, bought: 0, cashed: 0 }}>
+    <CasinoProvider initial={{ screen: "lobby", chips: 100, bought: 10, cashed: 0 }}>
       <Header />
       <Probe />
     </CasinoProvider>,

@@ -66,7 +66,7 @@ export function LandingScreen() {
         </div>
 
         <div className={styles.cta}>
-          <button className={styles.enter} onClick={() => navigate("buy")}>
+          <button className={styles.enter} onClick={() => navigate({ kind: "buy" })}>
             Casino betreten
           </button>
         </div>

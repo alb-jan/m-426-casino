@@ -27,7 +27,7 @@ export function ExitScreen() {
           <button className={styles.restart} onClick={reset}>
             Neue Sitzung starten
           </button>
-          <button className={styles.continue} onClick={() => navigate("lobby")}>
+          <button className={styles.continue} onClick={() => navigate({ kind: "lobby" })}>
             Doch weiterspielen
           </button>
         </div>
