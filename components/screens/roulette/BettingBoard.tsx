@@ -4,6 +4,7 @@ import { GRID, numberBg, type BetKey, type Bets, type OutsideKey } from "@/lib/r
 import styles from "./RouletteScreen.module.css";
 
 interface Props {
+  disabled?: boolean;
   bets: Bets;
   denom: number;
   onPick: (d: number) => void;
@@ -32,14 +33,14 @@ function BetMarker({ amount, className }: { amount?: number; className: string }
   return <span className={className}>{formatNumber(amount)}</span>;
 }
 
-export function BettingBoard({ bets, denom, onPick, onPlace, onClear }: Props) {
+export function BettingBoard({ bets, denom, onPick, onPlace, onClear, disabled = false }: Props) {
   return (
     <section className={styles.board}>
       <div className={styles.boardHead}>
         <div className={styles.denoms}>
           <span className={styles.denomLabel}>Jeton-Wert</span>
           {[...DENOMS].reverse().map((d) => (
-            <button
+            <button disabled={disabled}
               key={d}
               aria-label={`Jeton ${d}`}
               aria-pressed={denom === d}
@@ -55,19 +56,19 @@ export function BettingBoard({ bets, denom, onPick, onPlace, onClear }: Props) {
             </button>
           ))}
         </div>
-        <button className={styles.clear} onClick={onClear}>
+        <button disabled={disabled} className={styles.clear} onClick={onClear}>
           Einsätze löschen
         </button>
       </div>
 
       <div className={styles.numbersRow}>
-        <button aria-label="Zahl 0" className={styles.zero} onClick={() => onPlace("n:0")}>
+        <button disabled={disabled} aria-label="Zahl 0" className={styles.zero} onClick={() => onPlace("n:0")}>
           0
           <BetMarker amount={bets["n:0"]} className={styles.markerZero} />
         </button>
         <div className={styles.grid}>
           {GRID.map((n) => (
-            <button
+            <button disabled={disabled}
               key={n}
               aria-label={`Zahl ${n}`}
               className={styles.number}
@@ -83,7 +84,7 @@ export function BettingBoard({ bets, denom, onPick, onPlace, onClear }: Props) {
 
       <div className={styles.dozens}>
         {DOZENS.map(([k, label]) => (
-          <button key={k} aria-label={label} className={styles.dozen} onClick={() => onPlace(k)}>
+          <button disabled={disabled} key={k} aria-label={label} className={styles.dozen} onClick={() => onPlace(k)}>
             {label}
             <BetMarker amount={bets[k]} className={styles.markerSide} />
           </button>
@@ -92,7 +93,7 @@ export function BettingBoard({ bets, denom, onPick, onPlace, onClear }: Props) {
 
       <div className={styles.outside}>
         {OUTSIDE.map(([k, label, bg]) => (
-          <button key={k} aria-label={label} className={styles.outsideBtn} style={{ background: bg }} onClick={() => onPlace(k)}>
+          <button disabled={disabled} key={k} aria-label={label} className={styles.outsideBtn} style={{ background: bg }} onClick={() => onPlace(k)}>
             {label}
             <BetMarker amount={bets[k]} className={styles.markerSide} />
           </button>
