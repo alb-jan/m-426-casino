@@ -3,12 +3,19 @@ import { MAX_CHF, MIN_CHF, RATE } from "./wallet";
 
 export type PurchaseResult = { ok: true; chf: number; chips: number } | { ok: false; error: string };
 
-/** Text → Frankenbetrag. Komma wird als Dezimaltrennzeichen akzeptiert. */
-export function parseAmount(input: string): number {
-  return parseFloat(String(input).replace(",", ".").replace(/[^0-9.]/g, ""));
+/** Vollstaendige Betragsyntax; Werte werden zuerst als ganze Rappen gelesen. */
+function parseRappen(input: string): number {
+  const match = /^(?:CHF\s*)?(\d+)(?:[.,](\d{1,2}))?$/i.exec(input.trim());
+  if (!match) return NaN;
+  const rappen = Number(match[1]) * 100 + Number((match[2] ?? "").padEnd(2, "0"));
+  return Number.isSafeInteger(rappen) ? rappen : NaN;
 }
 
-const toChips = (chf: number) => Math.floor(Math.round(chf * RATE * 1000) / 1000);
+export function parseAmount(input: string): number {
+  return parseRappen(input) / 100;
+}
+
+const toChips = (chf: number) => Math.floor(Math.round(chf * 100) * RATE / 100);
 
 /** Jetons, die der Spieler für die Eingabe erhalten würde (0 bei ungültiger Eingabe). */
 export function previewChips(input: string): number {

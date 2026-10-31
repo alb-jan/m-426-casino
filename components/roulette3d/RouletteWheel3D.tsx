@@ -13,13 +13,14 @@ interface Props {
   /** Gewinnzahl der laufenden Drehung oder null im Ruhezustand */
   target: number | null;
   /** wird aufgerufen, sobald die Kugel liegen bleibt */
-  onSpinEnd: () => void;
+  onSpinEnd: (roundId?: number) => void;
+  spinId?: number;
   duration?: number;
 }
 
 type Status = "loading" | "ready" | "fallback";
 
-export function RouletteWheel3D({ target, onSpinEnd, duration = 5200 }: Props) {
+export function RouletteWheel3D({ target, onSpinEnd, duration = 5200, spinId }: Props) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<WheelScene | null>(null);
   const endRef = useRef(onSpinEnd);
@@ -58,19 +59,23 @@ export function RouletteWheel3D({ target, onSpinEnd, duration = 5200 }: Props) {
       spinningFor.current = null;
       return;
     }
-    if (spinningFor.current === target) return;
+    const token = spinId ?? target;
+    if (spinningFor.current === token) return;
+    let cancelled = false;
+    const complete = endRef.current;
     if (status === "ready" && sceneRef.current) {
-      spinningFor.current = target;
-      sceneRef.current.spinTo(target, duration).then(() => endRef.current());
+      spinningFor.current = token;
+      sceneRef.current.spinTo(target, duration).then(() => { if (!cancelled) complete(spinId); });
+      return () => { cancelled = true; spinningFor.current = null; };
     } else if (status === "fallback") {
-      spinningFor.current = target;
-      const t = setTimeout(() => endRef.current(), FALLBACK_SPIN_MS);
+      spinningFor.current = token;
+      const t = setTimeout(() => complete(spinId), FALLBACK_SPIN_MS);
       return () => {
         clearTimeout(t);
         spinningFor.current = null;
       };
     }
-  }, [target, status, duration]);
+  }, [target, status, duration, spinId]);
 
   const spinning = target !== null;
 

@@ -37,7 +37,7 @@ export function RouletteScreen(options: RouletteOptions) {
 
         <div className={styles.columns}>
           <section className={styles.side}>
-            <RouletteWheel3D target={r.pending} onSpinEnd={r.finishSpin} />
+            <RouletteWheel3D target={r.pending} onSpinEnd={() => r.finishSpin(r.roundId)} spinId={r.roundId} />
             <ResultPanel spinning={r.spinning} result={r.result} />
 
             {r.history.length > 0 && (
@@ -55,6 +55,7 @@ export function RouletteScreen(options: RouletteOptions) {
 
             <button
               className={styles.spin}
+              disabled={r.spinning}
               onClick={r.spin}
               style={
                 r.spinning
@@ -66,7 +67,7 @@ export function RouletteScreen(options: RouletteOptions) {
             </button>
           </section>
 
-          <BettingBoard bets={r.bets} denom={r.denom} onPick={r.pickDenom} onPlace={r.place} onClear={r.clearBets} />
+          <BettingBoard bets={r.bets} denom={r.denom} onPick={r.pickDenom} onPlace={r.place} onClear={r.clearBets} disabled={r.spinning} />
         </div>
       </div>
     </main>

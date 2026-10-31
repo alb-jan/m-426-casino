@@ -177,11 +177,11 @@ export function usePokerGame({
     raiseDown: () => setRaiseAmt((a) => raiseStep(game, a, -1)),
     nextHand: () => {
       if (game.players[0].stack < BB) {
-        navigate("lobby");
+        navigate({ kind: "lobby" });
         return;
       }
       startHand(nextHandStacks(game), (game.dealer + 1) % SEATS);
     },
-    toLobby: () => navigate("lobby"),
+    toLobby: () => navigate({ kind: "lobby" }),
   };
 }
