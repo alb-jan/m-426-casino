@@ -1,3 +1,4 @@
+import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 import { act, render } from "@testing-library/react";
 import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -15,9 +16,9 @@ describe("Jeton-Flug", () => {
   it("lässt die Blinds auch im React-StrictMode in den Pot fliegen", () => {
     const { container } = render(
       <StrictMode>
-        <CasinoProvider initial={{ screen: "poker", chips: 1000, bought: 100, cashed: 0 }}>
+        <NotificationProvider><CasinoProvider initial={{ screen: "poker", chips: 1000, bought: 100, cashed: 0 }}>
           <PokerScreen rng={() => 0.5} />
-        </CasinoProvider>
+        </CasinoProvider></NotificationProvider>
       </StrictMode>,
     );
     // Small Blind (Vera, links) und Big Blind (Ruben, Mitte) starten an ihren Plätzen
