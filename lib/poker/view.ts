@@ -39,7 +39,7 @@ export function seatStatus(s: PokerState, seat: number): { text: string; color: 
   const p = s.players[seat];
   const active = s.phase === "bet" && s.toAct === seat;
   return {
-    text: p.folded ? "Gepasst" : p.last || (active ? "Am Zug …" : ""),
+    text: p.folded ? "Gepasst" : actionText(p.last) || (active ? "Am Zug …" : ""),
     color: p.folded ? "#8A6F6C" : p.allIn ? "#F0C75C" : "#C9D3CA",
   };
 }
@@ -51,9 +51,36 @@ export function outcomeMessage(s: PokerState): string {
   const me = s.players[ME];
   const myNet = me.stack - me.startStack;
   if (myNet > 0) {
-    return `Du gewinnst ${formatNumber(myNet)} Jetons${me.handName ? " mit " + me.handName : ""}.`;
+    return `Du gewinnst ${formatNumber(myNet)} Jetons${me.hand ? " mit " + handName(me.hand) : ""}.`;
   }
   const winners = res.winners.map((i) => s.players[i]);
-  const best = winners[0]?.handName;
+  const best = winners[0]?.hand ? handName(winners[0].hand) : undefined;
   return `${winners.map((w) => w.name).join(" & ")} gewinnt den Pot${best ? " mit " + best : ""}.`;
+}
+
+export interface HandOutcomeView {
+ title:string;kind:"win"|"lose"|"info";sub:string;
+ rows:{name:string;hand:string;win:boolean;net:number}[];
+}
+export function actionText(action:PokerState["players"][number]["last"]):string {
+ if(!action)return "";
+ switch(action.kind){
+ case "small-blind":return "Small Blind";
+ case "big-blind":return "Big Blind";
+ case "fold":return "Passt";
+ case "check":return "Schiebt";
+ case "call":return `Geht mit ${formatNumber(action.amount ?? 0)}`;
+ case "all-in":return `All-In ${formatNumber(action.amount ?? 0)}`;
+ case "raise":return `Erhöht auf ${formatNumber(action.amount ?? 0)}`;
+ }
+}
+export function presentOutcome(game:PokerState):HandOutcomeView|null {
+ const result=game.result;if(!result)return null;
+ const net=result.nets[0];const folded=game.players[0].folded;
+ return {
+  title:net>0?"Gewonnen!":net===0||folded?"Runde beendet":"Verloren",
+  kind:net>0?"win":net===0||folded?"info":"lose",
+  sub:(result.reason==="folds"?"Alle anderen haben gepasst.":"Showdown – die besten fünf Karten zählen.")+(result.pots>1&&result.allIn?` · ${result.pots} Pots (All-In)`:""),
+  rows:game.players.map((player,i)=>({name:player.name,hand:player.folded?"gepasst":result.showdown?(player.hand?handName(player.hand):"—"):"gewinnt ohne Showdown",win:result.winners.includes(i)&&result.nets[i]>0,net:result.nets[i]})),
+ };
 }

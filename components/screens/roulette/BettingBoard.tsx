@@ -1,6 +1,7 @@
+import { numberBg } from "@/lib/roulette/view";
 import { CHIP_STYLES, DENOMS } from "@/lib/chips";
 import { formatNumber } from "@/lib/format";
-import { GRID, numberBg, type BetKey, type Bets, type OutsideKey } from "@/lib/roulette/rules";
+import { GRID, type BetKey, type Bets, type OutsideKey } from "@/lib/roulette/rules";
 import styles from "./RouletteScreen.module.css";
 
 interface Props {
@@ -105,7 +106,7 @@ export function BettingBoard({ bets, denom, onPick, onPlace, onClear, disabled =
           Einzelzahl <strong>35 : 1</strong>
         </span>
         <span>
-          Dutzend / Kolonne <strong>2 : 1</strong>
+          Dutzend <strong>2 : 1</strong>
         </span>
         <span>
           Rot / Schwarz · Gerade / Ungerade · 1–18 / 19–36 <strong>1 : 1</strong>

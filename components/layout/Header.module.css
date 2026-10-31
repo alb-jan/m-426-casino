@@ -46,3 +46,8 @@
   .brandSub { display: none; }
   .balanceValue { font-size: 18px; }
 }
+
+@media (max-width: 720px) {
+  .right { flex-wrap: wrap; max-width: 100%; gap: 10px; }
+  .back { white-space: normal; }
+}

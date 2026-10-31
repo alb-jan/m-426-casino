@@ -1,3 +1,5 @@
+> Aktualisierung 29.10.2026: Dieses Dokument enthält historische Entwicklungsnotizen. Den aktuellen Vertrag und die belegten Änderungen beschreibt [release-improvement.md](release-improvement.md). Insbesondere Observer, Navigation, Roulette-State und Poker-Presenter wurden überarbeitet.
+
 # Feature: Roulette-Spiellogik (`feature/roulette-engine`)
 
 **User Story:** US-10 · **Sprint:** 4 · **Story Points:** 5 · **Basis:** `feature/chips-wallet`

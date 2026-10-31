@@ -1,5 +1,3 @@
-import { formatNumber } from "@/lib/format";
-import type { ToastKind } from "@/lib/events";
 
 /** Fächer des europäischen Kessels im Uhrzeigersinn, beginnend bei Zéro. */
 export const WHEEL_ORDER = [
@@ -28,10 +26,6 @@ export interface SpinResult {
 }
 
 export const numberColor = (n: number): NumberColor => (n === 0 ? "green" : RED.has(n) ? "red" : "black");
-
-export const colorName = (n: number) => ({ green: "Grün · Zéro", red: "Rot", black: "Schwarz" })[numberColor(n)];
-
-export const numberBg = (n: number) => ({ green: "#16724E", red: "#B23A2E", black: "#1A1A1A" })[numberColor(n)];
 
 export function placeBet(bets: Bets, key: BetKey, amount: number): Bets {
   return { ...bets, [key]: (bets[key] ?? 0) + amount };
@@ -84,14 +78,3 @@ export function resolveSpin(num: number, bets: Bets): SpinResult {
   return { num, out, net: out - total, total };
 }
 
-export function spinMessage(r: SpinResult): { kind: ToastKind; title: string; msg: string } {
-  const col = r.num === 0 ? "Grün" : RED.has(r.num) ? "Rot" : "Schwarz";
-  const head = `${r.num} ${col} – `;
-  if (r.net > 0) {
-    return { kind: "win", title: "Gewonnen!", msg: `${head}Auszahlung ${formatNumber(r.out)} Jetons (+${formatNumber(r.net)}).` };
-  }
-  if (r.out > 0) {
-    return { kind: "info", title: "Runde beendet", msg: `${head}Auszahlung ${formatNumber(r.out)} Jetons (${formatNumber(r.net)}).` };
-  }
-  return { kind: "lose", title: "Verloren", msg: `${head}Einsatz von ${formatNumber(r.total)} Jetons verfällt.` };
-}

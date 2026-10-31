@@ -1,5 +1,6 @@
+import { colorName, numberBg } from "@/lib/roulette/view";
 import { formatNumber } from "@/lib/format";
-import { colorName, numberBg, type SpinResult } from "@/lib/roulette/rules";
+import { type SpinResult } from "@/lib/roulette/rules";
 import styles from "./RouletteScreen.module.css";
 
 interface Props {

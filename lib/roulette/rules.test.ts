@@ -1,14 +1,13 @@
+import { colorName, numberBg } from "./view";
+import { spinMessage } from "@/lib/roulette/view";
 import { describe, expect, it } from "vitest";
 import {
-  colorName,
   GRID,
-  numberBg,
   numberColor,
   payout,
   placeBet,
   RED,
   resolveSpin,
-  spinMessage,
   spinNumber,
   totalBet,
   WHEEL_ORDER,

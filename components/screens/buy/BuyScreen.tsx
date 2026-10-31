@@ -117,7 +117,7 @@ export function BuyScreen() {
             <ol className={styles.flowList}>
               <li>Geld in Jetons tauschen</li>
               <li>Spiel wählen: Poker oder Roulette</li>
-              <li>Jederzeit auszahlen und das Casino verlassen</li>
+              <li>Nach einer Runde auszahlen und das Casino verlassen</li>
             </ol>
           </div>
         </aside>

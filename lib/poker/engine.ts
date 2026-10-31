@@ -1,6 +1,5 @@
-import { formatNumber } from "@/lib/format";
 import type { Card } from "./cards";
-import { evalBest, handName } from "./evaluate";
+import { evalBest, type HandResult } from "./evaluate";
 
 export const SB = 10;
 export const BB = 20;
@@ -25,28 +24,20 @@ export interface Player {
   committed: number;
   acted: boolean;
   /** letzte Aktion als Text („Geht mit 20“) */
-  last: string;
+  last: {kind:"small-blind"|"big-blind"|"fold"|"check"|"call"|"all-in"|"raise";amount?:number} | null;
   won: number;
   score?: number;
-  handName?: string;
-}
-
-export interface ResultRow {
-  name: string;
-  hand: string;
-  win: boolean;
-  net: number;
+  hand?: HandResult;
 }
 
 export interface HandOutcome {
-  title: string;
-  kind: "win" | "lose" | "info";
-  sub: string;
+  reason: "folds" | "showdown";
   pot: number;
   showdown: boolean;
-  rows: ResultRow[];
-  /** Sitzindizes aller Gewinner (erster = Gewinner des Hauptpots) */
   winners: number[];
+  nets: number[];
+  pots: number;
+  allIn: boolean;
 }
 
 export interface PokerState {
@@ -116,7 +107,7 @@ export function newHand(stacks: number[], dealer: number, deck: Card[]): PokerSt
     bet: 0,
     committed: 0,
     acted: false,
-    last: "",
+    last: null,
     won: 0,
   }));
   const s: PokerState = {
@@ -132,7 +123,7 @@ export function newHand(stacks: number[], dealer: number, deck: Card[]): PokerSt
     phase: "bet",
     result: null,
   };
-  const post = (i: number, amt: number, label: string) => {
+  const post = (i: number, amt: number, label: NonNullable<Player["last"]>["kind"]) => {
     const p = s.players[i];
     const pay = Math.min(amt, p.stack);
     p.stack -= pay;
@@ -140,10 +131,10 @@ export function newHand(stacks: number[], dealer: number, deck: Card[]): PokerSt
     p.committed += pay;
     s.pot += pay;
     if (p.stack === 0) p.allIn = true;
-    p.last = label;
+    p.last = {kind:label};
   };
-  post((dealer + 1) % SEATS, SB, "Small Blind");
-  post((dealer + 2) % SEATS, BB, "Big Blind");
+  post((dealer + 1) % SEATS, SB, "small-blind");
+  post((dealer + 2) % SEATS, BB, "big-blind");
   // Falls der erste Spieler bereits All-In ist, zum nächsten handlungsfähigen weitergehen
   if (s.players[s.toAct].allIn) s.toAct = nextIdx(s, s.toAct);
   return s;
@@ -164,7 +155,7 @@ export function applyAction(state: PokerState, action: PokerAction, target = 0):
   if (action === "fold") {
     p.folded = true;
     p.acted = true;
-    p.last = "Passt";
+    p.last = {kind:"fold"};
   } else if (action === "call") {
     const need = s.currentBet - p.bet;
     const pay = Math.min(need, p.stack);
@@ -174,7 +165,7 @@ export function applyAction(state: PokerState, action: PokerAction, target = 0):
     s.pot += pay;
     if (p.stack === 0 && pay > 0) p.allIn = true;
     p.acted = true;
-    p.last = need === 0 ? "Schiebt" : pay < need ? `All-In ${formatNumber(p.bet)}` : `Geht mit ${formatNumber(pay)}`;
+    p.last = need === 0 ? {kind:"check"} : pay < need ? {kind:"all-in",amount:p.bet} : {kind:"call",amount:pay};
   } else {
     // Mindesterhöhung: neuer Einsatz muss den vorigen um mindestens minRaise übersteigen
     const cap = p.bet + p.stack;
@@ -196,14 +187,14 @@ export function applyAction(state: PokerState, action: PokerAction, target = 0):
       });
     }
     p.acted = true;
-    p.last = p.allIn ? `All-In ${formatNumber(tgt)}` : `Erhöht auf ${formatNumber(tgt)}`;
+    p.last = {kind:p.allIn ? "all-in" : "raise",amount:tgt};
   }
   return proceed(s);
 }
 
 function proceed(s: PokerState): PokerState {
   const alive = s.players.filter((p) => !p.folded);
-  if (alive.length === 1) return finish(s, "Alle anderen haben gepasst.");
+  if (alive.length === 1) return finish(s, "folds");
   const active = canAct(s);
   const settled = active.every((p) => p.acted && p.bet === s.currentBet);
   if (active.length === 0 || settled) return nextStreet(s);
@@ -218,7 +209,7 @@ function nextStreet(s: PokerState): PokerState {
   s.players.forEach((p) => {
     p.bet = 0;
     p.acted = false;
-    if (!p.folded) p.last = "";
+    if (!p.folded) p.last = null;
   });
   s.currentBet = 0;
   s.minRaise = BB;
@@ -250,9 +241,9 @@ function showdown(s: PokerState): PokerState {
     .forEach((p) => {
       const r = evalBest([...p.hole, ...s.community]);
       p.score = r.score;
-      p.handName = handName(r);
+      p.hand = r;
     });
-  return finish(s, "Showdown – die besten fünf Karten zählen.");
+  return finish(s, "showdown");
 }
 
 /* ---------------------------------------------------------------- Pots & Auswertung */
@@ -275,7 +266,7 @@ export function buildPots(players: { committed: number; folded: boolean }[]): Po
   return pots;
 }
 
-function finish(s: PokerState, sub: string): PokerState {
+function finish(s: PokerState, reason: HandOutcome["reason"]): PokerState {
   const alive = s.players.filter((p) => !p.folded);
   const isShowdown = alive.length > 1;
   const pots = buildPots(s.players);
@@ -309,26 +300,10 @@ function finish(s: PokerState, sub: string): PokerState {
 
   s.phase = "done";
   s.toAct = -1;
-  const me = s.players[0];
-  const myNet = me.stack - me.startStack;
-  const iWon = myNet > 0;
-  const allIn = s.players.some((p) => p.allIn);
   s.result = {
-    sub: sub + (pots.length > 1 && allIn ? ` · ${pots.length} Pots (All-In)` : ""),
-    title: iWon ? "Gewonnen!" : myNet === 0 || me.folded ? "Runde beendet" : "Verloren",
-    kind: iWon ? "win" : myNet === 0 || me.folded ? "info" : "lose",
-    pot: s.pot,
-    showdown: isShowdown,
-    winners: winnerOrder,
-    rows: s.players.map((p, i) => {
-      const net = p.stack - p.startStack;
-      return {
-        name: p.name,
-        hand: p.folded ? "gepasst" : isShowdown ? (p.handName ?? "—") : "gewinnt ohne Showdown",
-        win: winnerSet.has(i) && net > 0,
-        net,
-      };
-    }),
+    reason, pot:s.pot, showdown:isShowdown, winners:winnerOrder,
+    nets:s.players.map((player)=>player.stack-player.startStack),
+    pots:pots.length,allIn:s.players.some((player)=>player.allIn),
   };
   return s;
 }

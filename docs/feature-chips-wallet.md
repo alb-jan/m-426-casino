@@ -1,3 +1,5 @@
+> Aktualisierung 29.10.2026: Dieses Dokument enthält historische Entwicklungsnotizen. Den aktuellen Vertrag und die belegten Änderungen beschreibt [release-improvement.md](release-improvement.md). Insbesondere Observer, Navigation, Roulette-State und Poker-Presenter wurden überarbeitet.
+
 # Feature: Jetons & Guthaben (`feature/chips-wallet`)
 
 **User Story:** US-03 · **Sprint:** 1 · **Story Points:** 5 · **Basis:** `feature/notifications`
