@@ -1,3 +1,5 @@
+> Aktualisierung 29.10.2026: Dieses Dokument enthält historische Entwicklungsnotizen. Den aktuellen Vertrag und die belegten Änderungen beschreibt [release-improvement.md](release-improvement.md). Insbesondere Observer, Navigation, Roulette-State und Poker-Presenter wurden überarbeitet.
+
 # Feature: 3D-Roulettekessel (`feature/roulette-3d-wheel`)
 
 **User Story:** US-12 · **Sprint:** 4 · **Story Points:** 8 · **Basis:** `feature/roulette-table`

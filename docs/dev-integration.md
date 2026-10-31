@@ -1,3 +1,5 @@
+> Stand 29.10.2026: Die folgenden Integrationen und Rückblicke sind historische Aufzeichnungen. dev wurde bereits nach main übernommen. Die neue Verbesserung liegt auf codex/US-16-release; persönliche Reviews und der anschliessende Merge nach main folgen später. Aktueller Stand: [release-improvement.md](release-improvement.md).
+
 # Integration: `dev`-Branch
 
 Der Branch `dev` ist **nur lokal** und dient dazu, die ganze App mit allen Features zusammen zu testen.

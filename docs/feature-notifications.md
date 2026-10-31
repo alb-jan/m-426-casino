@@ -1,3 +1,5 @@
+> Aktualisierung 29.10.2026: Dieses Dokument enthält historische Entwicklungsnotizen. Den aktuellen Vertrag und die belegten Änderungen beschreibt [release-improvement.md](release-improvement.md). Insbesondere Observer, Navigation, Roulette-State und Poker-Presenter wurden überarbeitet.
+
 # Feature: Benachrichtigungen (`feature/notifications`)
 
 **User Story:** US-02 · **Sprint:** 1 · **Story Points:** 3 · **Basis:** `feature/project-setup`

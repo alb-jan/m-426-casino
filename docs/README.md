@@ -1,95 +1,29 @@
-# Casino Goldenes Ass – Projektdokumentation
+# Casino Goldenes Ass
 
-Schulprojekt (Modul 426 – Software agil entwickeln). Eine Casino-Web-App mit
-**Texas Hold'em Poker** und **europäischem Roulette** (inkl. 3D-Kessel aus Blender),
-umgesetzt mit **Next.js (App Router) · React · TypeScript**.
+Das Projekt verbindet Poker und Roulette mit Kauf, Lobby, Kasse und einem gemeinsamen Wallet. Kaufgrenzen sind CHF 5 bis 500. Ein CHF entspricht zehn Jetons; Bruchteile werden abgerundet. Nach einer aktiven Hand beziehungsweise Drehung ist die Rückkehr möglich. Offene Roulette-Einsätze werden beim Verlassen vor dem Dreh vollständig zurückerstattet.
 
-Das visuelle Design stammt aus dem Prototyp `Casino Goldenes Ass.dc.html`
-(Zip „Casino-App mit Poker und Roulette“) und wird möglichst 1:1 umgesetzt.
+## Architektur des Release-Kandidaten
 
-## Vorgehen: Scrum-light + TDD
+- `lib/purchase.ts` prüft die vollständige Eingabe und rechnet mit ganzzahligen Rappen.
+- `components/games/registry.tsx` enthält `GameDefinition` und die Spiel-Registry. Lobby und App-Shell lesen dieselben Definitionen. Ein Testspiel wird ohne neue Verzweigung integriert.
+- `CasinoProvider` stellt getrennte Lese-, Aktions- und Navigationsverträge bereit. `navigate(AppRoute)` prüft Spiel-ID, Guthaben und Leave-Guard. Eine erlaubte Rückerstattung und der Wechsel bilden eine Wallet-Aktion.
+- `RouletteGame` delegiert Aktionen an `BettingState`, `SpinningState` oder `ResultState`. Die Klassen benötigen weder React noch Wallet. Snapshots und Effekte sind unveränderlich; die Runden-ID verhindert doppelte und verspätete Auszahlungen.
+- Poker bleibt eine funktionale Zustandsmaschine. `usePokerTurnScheduler` und `useChipFlights` kapseln Zeitabläufe und Animation. Die Engine liefert Ergebnisdaten; der Presenter in `lib/poker/view.ts` erzeugt Texte.
+- `useNotify()` publiziert immer über den Bus des `NotificationProvider`. Der Provider besitzt eine eigene stabile Instanz oder erhält einen injizierten Bus. Sein Observer erzeugt die Toasts. Abonnements und Timer werden aufgeräumt.
+- `RouletteWheel3D` akzeptiert eine SceneFactory mit `spinTo` und `dispose`. Der Standard lädt die echte three.js-Szene, Tests ersetzen den Vertrag. Ohne WebGL beziehungsweise bei Ladefehlern bleibt die Ersatzanimation bedienbar.
 
-| Element | Umsetzung im Projekt |
-|---|---|
-| Product Backlog | [`product-backlog.md`](./product-backlog.md) – User Stories mit Priorität und Story Points |
-| Sprints | 4 Sprints (siehe unten), jeder Sprint liefert ein lauffähiges Inkrement |
-| Sprint Planning | Pro Feature-Branch: Abschnitt „Planung“ im zugehörigen Dokument |
-| Daily / Review | Kurze Notizen „Probleme & Lösungen“ in jedem Feature-Dokument |
-| Retrospektive | Abschnitt „Retrospektive“ am Ende jedes Sprints in [`dev-integration.md`](./dev-integration.md) |
-| Definition of Done | siehe unten |
+## Vorgehen und belegte Grenzen
 
-### Test Driven Development (Red → Green → Refactor)
+Die vier ursprünglichen Inkremente und ihre Rückblicke stehen in [dev-integration.md](dev-integration.md). Diese Aufzeichnungen sind historische Teamdokumentation. Die frühere Integration aus `dev` wurde bereits nach `main` übernommen; die alte Aussage, `main` bleibe grundsätzlich unverändert, gilt nicht.
 
-Jedes Feature wird in drei (bis vier) Schritten committet:
+Die Verbesserung vom 29.10.2026 arbeitet mit Test-Commit, Push und geprüftem roten CI-Lauf vor der Umsetzung. Danach folgen Implementierungs-Commit, grüner CI-Lauf und Pull Request. Abhängige Pakete wurden auf dem gemeinsamen CI-Fundament beziehungsweise Release-Kandidaten aufgebaut. Dies weicht vom ursprünglich geplanten Start jedes Branches direkt ab `main` ab und ist in der Git-Historie sichtbar.
 
-1. `docs(...)`: Planung – Funktionen, Aufbau, Akzeptanzkriterien werden dokumentiert.
-2. `test(...)`: **Rote Tests** – die Tests werden geschrieben und committet, **bevor** Code existiert.
-   Die Tests schlagen zu diesem Zeitpunkt fehl (Nachweis im Dokument).
-3. `feat(...)`: **Grüne Umsetzung** – minimaler Code, bis alle Tests grün sind.
-4. `refactor(...)` / `docs(...)`: optionales Aufräumen und Nachführen der Dokumentation.
+Die neue Arbeit wurde KI-unterstützt über `alb-jan` ausgeführt. Die im Verbesserungsplan vorgesehene persönliche Arbeitsteilung und die gegenseitigen Reviews sind damit nicht durchgeführt. Die persönlichen Reviews folgen laut Auftraggeber später. Erst danach soll der Kandidat mit Merge-Commit nach `main` übernommen werden; Quellbranches bleiben erhalten.
 
-### Definition of Done
+## Definition of Done
 
-- Alle Akzeptanzkriterien der User Story sind durch Tests abgedeckt.
-- `npm test` ist grün, `npm run lint` und `npx tsc --noEmit` ohne Fehler.
-- Das Feature-Dokument beschreibt Funktionen, Tests, Probleme und Lösungen.
-- Das UI entspricht visuell dem Design-Prototyp.
+Akzeptanzkriterien haben passende Verhaltenstests. Tests, Typecheck, Lint und Produktionsbuild sind grün. Sichtbare Änderungen werden zusätzlich im Browser geprüft. Dokumente, Prüftag und Codecommit stimmen überein. Persönliche Reviews, Release-Merge und Deployment werden nur als erledigt geführt, wenn sie tatsächlich vorliegen.
 
-## Branch-Strategie
+## Dokumente
 
-- `main` wird **nicht** verändert.
-- Jedes Feature hat einen eigenen Branch `feature/<name>`.
-- Features, die auf einem anderen Feature aufbauen, werden von diesem Branch abgezweigt.
-- Am Schluss werden alle Features in den lokalen Branch `dev` gemerged (Integrationstest der ganzen App).
-
-```
-main
- └─ feature/project-setup
-     └─ feature/notifications
-         └─ feature/chips-wallet
-             ├─ feature/landing-page
-             ├─ feature/chip-purchase
-             ├─ feature/lobby
-             ├─ feature/cashout
-             ├─ feature/poker-engine ── feature/poker-table
-             └─ feature/roulette-engine ── feature/roulette-table ── feature/roulette-3d-wheel
-                                                         ▼
-                                                        dev
-```
-
-## Sprints
-
-| Sprint | Ziel | Branches |
-|---|---|---|
-| 1 – Fundament | Projekt, Tests, Design-Grundlagen, Guthaben, Benachrichtigungen | project-setup, notifications, chips-wallet |
-| 2 – Casino-Rahmen | Landing, Jetons-Kauf, Spielauswahl, Kasse | landing-page, chip-purchase, lobby, cashout |
-| 3 – Poker | Spiellogik und Pokertisch | poker-engine, poker-table |
-| 4 – Roulette | Spiellogik, Tableau, 3D-Kessel | roulette-engine, roulette-table, roulette-3d-wheel |
-
-## Feature-Dokumente
-
-| Branch | Dokument |
-|---|---|
-| feature/project-setup | [feature-project-setup.md](./feature-project-setup.md) |
-| feature/notifications | [feature-notifications.md](./feature-notifications.md) |
-| feature/chips-wallet | [feature-chips-wallet.md](./feature-chips-wallet.md) |
-| feature/landing-page | [feature-landing-page.md](./feature-landing-page.md) |
-| feature/chip-purchase | [feature-chip-purchase.md](./feature-chip-purchase.md) |
-| feature/lobby | [feature-lobby.md](./feature-lobby.md) |
-| feature/cashout | [feature-cashout.md](./feature-cashout.md) |
-| feature/poker-engine | [feature-poker-engine.md](./feature-poker-engine.md) |
-| feature/poker-table | [feature-poker-table.md](./feature-poker-table.md) |
-| feature/roulette-engine | [feature-roulette-engine.md](./feature-roulette-engine.md) |
-| feature/roulette-table | [feature-roulette-table.md](./feature-roulette-table.md) |
-| feature/roulette-3d-wheel | [feature-roulette-3d-wheel.md](./feature-roulette-3d-wheel.md) |
-| dev | [dev-integration.md](./dev-integration.md) |
-
-## Befehle
-
-```bash
-npm install
-npm run dev        # Entwicklungsserver auf http://localhost:3000
-npm test           # alle Tests (Vitest, einmalig)
-npm run test:watch # Tests im Watch-Modus
-npm run lint
-```
+[Product Backlog](product-backlog.md), [Release-Nachweise](release-improvement.md), [Branch-Zuordnung](branch-renaming.md) und [Übergabe](release-handover.md) beschreiben den aktuellen Stand. Die zwölf `feature-*.md` bleiben als Entwicklungsaufzeichnungen erhalten. Ein Aktualisierungshinweis am Anfang grenzt den heutigen Vertrag von früheren Implementierungen ab.
