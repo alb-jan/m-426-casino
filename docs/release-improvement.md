@@ -2,7 +2,7 @@
 
 ## Ergebnis und offene Freigabe
 
-Die Arbeitsphase vom 29./30.10.2026 korrigiert Kaufvalidierung, Navigation und Rückerstattung, setzt das klassische State-Pattern im Roulette ein und vereinheitlicht den Observer. Poker verwendet getrennte Hooks und einen Presenter. Die Dokumente liegen als neue Abgabekopien unter [abgabe](abgabe).
+Die Arbeitsphase ab 29.10.2026 korrigiert Kaufvalidierung, Navigation und Rückerstattung, setzt das klassische State-Pattern im Roulette ein und vereinheitlicht den Observer. Poker verwendet getrennte Hooks und einen Presenter. Die Dokumente liegen als neue Abgabekopien unter [abgabe](abgabe).
 
 Die persönlichen Reviews folgen auf ausdrücklichen Wunsch später. Deshalb bleibt `main` unverändert auf `808ae4881692f687dcf08604e13e5862c6459230`. Der Kandidat liegt auf `codex/US-16-release`. Das Vercel-Deployment führt der Auftraggeber später selbst durch. Der alte Vercel-Stand wird nicht als Nachweis dieses Kandidaten gewertet.
 
@@ -70,3 +70,5 @@ Word wurde mit Microsoft Word nativ gerendert, das Inhaltsverzeichnis aktualisie
 ## Verbleibende Schritte
 
 Persönliche Reviews, Übernahme nach main und das vom Auftraggeber selbst durchzuführende Vercel-Deployment bleiben offen. [release-handover.md](release-handover.md) beschreibt die konkrete Übergabe. Frühere, nicht dokumentierte Pushes oder persönliche Arbeitsschritte werden durch die neuen Nachweise nicht rückwirkend belegt.
+
+Die abschliessenden Desktopaufnahmen vom 31.10.2026 zeigen den bereits vollständig grün geprüften Codecommit 5a4c5d2. Die reine Dokumentaktualisierung danach verändert den Anwendungscode nicht.
